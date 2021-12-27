@@ -1,13 +1,20 @@
 package org.vstu.compprehension.controllers.interfaces;
 
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.vstu.compprehension.dto.*;
 import org.vstu.compprehension.dto.feedback.FeedbackDto;
 import org.vstu.compprehension.dto.question.QuestionDto;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 public interface ExerciseController {
+
+    @RequestMapping(value = {"/getExercises"}, method = { RequestMethod.GET })
+    @ResponseBody
+    List<Long> getExercises(HttpServletRequest request) throws Exception;
+
     /**
      * Get existing exercise attempt for current user
      * @param exerciseId Exercise id
@@ -104,7 +111,7 @@ public interface ExerciseController {
      * @throws Exception Something got wrong
      */
     @RequestMapping(value = {"/pages/exercise"}, method = { RequestMethod.GET })
-    String launch(Long exerciseId, HttpServletRequest request) throws Exception;
+    String launch(Model model, Long exerciseId, HttpServletRequest request);
 
     /**
      * Load session info

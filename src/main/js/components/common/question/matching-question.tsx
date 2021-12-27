@@ -1,19 +1,21 @@
 import { Droppable, DroppableEventNames, Plugins } from "@shopify/draggable";
 import { DraggableEventNames } from "@shopify/draggable/lib/draggable.bundle.legacy";
+import { observer } from "mobx-react";
 import React, { useEffect } from "react";
 import ReactDOM from "react-dom";
 import Select, { components } from "react-select";
+import { Answer } from "../../../types/answer";
 import { MatchingQuestion } from "../../../types/question";
 import { Optional } from "../optional";
 
 type MatchingQuestionComponentProps = {
     question: MatchingQuestion,
-    answers: [number, number][],
-    getAnswers: () => [number, number][],
-    onChanged: (newAnswers: [number, number][]) => void,
+    answers: Answer[],
+    getAnswers: () => Answer[],
+    onChanged: (newAnswers: Answer[]) => void,
 }
 
-export const MatchingQuestionComponent = (props: MatchingQuestionComponentProps) => {    
+export const MatchingQuestionComponent = observer((props: MatchingQuestionComponentProps) => {    
     const { question } = props;
     const { options } = question;
     switch(true) {
@@ -25,9 +27,10 @@ export const MatchingQuestionComponent = (props: MatchingQuestionComponentProps)
             return <DragAndDropMatchingQuestionComponent {...props}/>;              
     }
     return (<div>Not Implemented</div>);
-};
+});
 
-export const DragAndDropMatchingQuestionComponent = ({ question, getAnswers, onChanged }: MatchingQuestionComponentProps) => {
+export const DragAndDropMatchingQuestionComponent = observer((props: MatchingQuestionComponentProps) => {
+    const { question, getAnswers, onChanged } = props;
     if (question.options.displayMode !== 'dragNdrop') {
         return null;
     }
@@ -80,8 +83,11 @@ export const DragAndDropMatchingQuestionComponent = ({ question, getAnswers, onC
                         const leftId = e.parentElement?.id.split(`question_${question.questionId}_answer_`)[1] ?? '';
                         const rightId = e?.id.split('dragAnswer_')[1] ?? '';
                         return [+leftId, +rightId];
-                    });                        
-                onChanged(newHistory);
+                    });
+                const oldHistory = getAnswers();
+                
+                onChanged(newHistory.map(h => 
+                    ({ answer: h, isСreatedByUser: oldHistory.find(x => x.answer[0] === h[0] && x.answer[1] === h[1])?.isСreatedByUser ?? true })));
             }, 10);
         });
     }, [question.questionId])
@@ -89,11 +95,10 @@ export const DragAndDropMatchingQuestionComponent = ({ question, getAnswers, onC
     return (
         <div>
             <div className="row">
-                <div className="col-md">
-                    <p className="comp-ph-droppable-container" dangerouslySetInnerHTML={{ __html: question.text }} />
+                <div className="col-md">                    
                     {
                         !options.requireContext
-                            ? <p className="d-flex flex-column comp-ph-droppable-container">
+                            ? <p className="d-flex flex-column comp-ph-droppable-container comp-ph-question-text">
                                 {question.answers.map(a =>
                                     <div className="d-flex flex-row mb-3">
                                         <div className="mr-2 mt-1">
@@ -102,7 +107,7 @@ export const DragAndDropMatchingQuestionComponent = ({ question, getAnswers, onC
                                         <div dangerouslySetInnerHTML={{ __html: a.text}}></div>
                                     </div>)}
                             </p>
-                            : null
+                            : <p className="comp-ph-droppable-container comp-ph-question-text" dangerouslySetInnerHTML={{ __html: question.text }} />
                     }
                 </div>
                 <div className="col-md comp-ph-droppable-container d-flex justify-content-start align-items-start flex-column">
@@ -115,9 +120,10 @@ export const DragAndDropMatchingQuestionComponent = ({ question, getAnswers, onC
                 </div>
             </div>
         </div>);
-};
+});
 
-const ComboboxMatchingQuestionComponent = ({ question, getAnswers, onChanged }: MatchingQuestionComponentProps) => {    
+const ComboboxMatchingQuestionComponent = observer((props: MatchingQuestionComponentProps) => {
+    const { question, getAnswers, onChanged } = props;
     if (question.options.displayMode !== 'combobox') {
         return null;
     }
@@ -126,8 +132,7 @@ const ComboboxMatchingQuestionComponent = ({ question, getAnswers, onChanged }: 
     const groupsMaxLength = groups.reduce((len, g) => g.text.length > len ? g.text.length : len, 0);
     return (
         <div>
-            <p className="mb-5" dangerouslySetInnerHTML={{ __html: question.text }}>                
-            </p>
+            <p className="mb-5 comp-ph-question-text" dangerouslySetInnerHTML={{ __html: question.text }} />            
             <div>
                 {question.answers.map(asw => 
                     <div className="row mb-3">
@@ -135,7 +140,7 @@ const ComboboxMatchingQuestionComponent = ({ question, getAnswers, onChanged }: 
                         </div>
                         <div className="col-md-auto">
                             <div style={{width: `${(8*groupsMaxLength) + 100}px`}}>
-                                <Select defaultValue={(getAnswers().find(v => v[0] === asw.id)?.[1] ?? null) as any}
+                                <Select defaultValue={(getAnswers().find(v => v.answer[0] === asw.id)?.answer?.[1] ?? null) as any}
                                         options={groups//.filter(g => !options.hideSelected || !Object.values(currentState).includes(g.id) || currentState[asw.id] == g.id)
                                                         .map(g => ({ value: g.id, label: g.text }))}
                                         components={{ Option: RawHtmlSelectOption, SingleValue: RawHtmlSelectSingleValue }}               
@@ -143,8 +148,8 @@ const ComboboxMatchingQuestionComponent = ({ question, getAnswers, onChanged }: 
                                             if (!v) {
                                                 return;
                                             }
-                                            const otherHistoryItems = getAnswers().filter(v => v[0] !== asw.id);
-                                            const historyItem = [asw.id, +v.value] as [number, number];
+                                            const otherHistoryItems = getAnswers().filter(v => v.answer[0] !== asw.id);
+                                            const historyItem = { answer: [asw.id, +v.value] as [number, number], isСreatedByUser: true };
                                             const newAnswersHistory = [...otherHistoryItems, historyItem];
                                             onChanged(newAnswersHistory);                                            
                                         })} /> 
@@ -155,9 +160,10 @@ const ComboboxMatchingQuestionComponent = ({ question, getAnswers, onChanged }: 
             </div>
         </div>
     );
-};
+});
 
-const ComboboxMatchingQuestionWithCtxComponent = ({ question, getAnswers, onChanged }: MatchingQuestionComponentProps) => {
+const ComboboxMatchingQuestionWithCtxComponent = observer((props: MatchingQuestionComponentProps) => {
+    const { question, getAnswers, onChanged } = props;
     if (question.options.displayMode !== 'combobox') {
         return null;
     }
@@ -175,8 +181,8 @@ const ComboboxMatchingQuestionWithCtxComponent = ({ question, getAnswers, onChan
                                                return;
                                             }
 
-                                            const otherHistoryItems = getAnswers().filter(v => v[0] !== answerId);
-                                            const historyItem = [answerId, +v.value] as [number, number];
+                                            const otherHistoryItems = getAnswers().filter(v => v.answer[0] !== answerId);
+                                            const historyItem = { answer: [answerId, +v.value] as [number, number], isСreatedByUser: true };
                                             const newAnswersHistory = [...otherHistoryItems, historyItem];
                                             onChanged(newAnswersHistory);     
                                         })}
@@ -187,10 +193,10 @@ const ComboboxMatchingQuestionWithCtxComponent = ({ question, getAnswers, onChan
 
     return (
         <div>
-            <p dangerouslySetInnerHTML={{ __html: question.text }} />
+            <p className="comp-ph-question-text" dangerouslySetInnerHTML={{ __html: question.text }} />
         </div>
     );
-};
+});
 
 const RawHtmlSelectOption = (props : any) => {
     const {innerRef, innerProps, children, ...rest} = props;

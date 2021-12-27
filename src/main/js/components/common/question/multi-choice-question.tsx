@@ -1,17 +1,19 @@
+import { observer } from "mobx-react";
 import React, { useEffect } from "react";
 import ReactDOM from "react-dom";
+import { Answer } from "../../../types/answer";
 import { MatchingQuestion, MultiChoiceQuestion } from "../../../types/question";
 import { ToggleSwitch } from "../toggle";
 import { DragAndDropMatchingQuestionComponent } from "./matching-question";
 
 type MultiChoiceQuestionComponentProps = {
     question: MultiChoiceQuestion,
-    answers: [number, number][],
-    getAnswers: () => [number, number][],
-    onChanged: (newAnswers: [number, number][]) => void,
+    answers: Answer[],
+    getAnswers: () => Answer[],
+    onChanged: (newAnswers: Answer[]) => void,
 }
 
-export const MultiChoiceQuestionComponent = (props: MultiChoiceQuestionComponentProps) => {
+export const MultiChoiceQuestionComponent = observer((props: MultiChoiceQuestionComponentProps) => {
     const { question } = props;
     const { options } = question;
     switch(true) {
@@ -23,10 +25,11 @@ export const MultiChoiceQuestionComponent = (props: MultiChoiceQuestionComponent
             return <DndMultiChoiceQuestionComponent {...props}/>;
     }
     return (<div>Not implemented</div>);
-};
+});
 
 
-const SwitchMultiChoiceQuestionComponent = ({ question, getAnswers, onChanged }: MultiChoiceQuestionComponentProps) => {    
+const SwitchMultiChoiceQuestionComponent = observer((props: MultiChoiceQuestionComponentProps) => {
+    const { question, getAnswers, onChanged } = props;
     if (question.options.displayMode !== 'switch') {
         return null;
     }
@@ -36,8 +39,8 @@ const SwitchMultiChoiceQuestionComponent = ({ question, getAnswers, onChanged }:
     const onSwitched = (answerId: number, val: string) => {
         const value = selectorTexts.indexOf(val);
         const newHistory = [ 
-            ...getAnswers().filter(v => v[0] !== answerId),
-            [answerId, value] as [number, number],
+            ...getAnswers().filter(v => v.answer[0] !== answerId),
+            { answer: [answerId, value] as [number, number], isСreatedByUser: true },
         ];
         onChanged(newHistory);
     }
@@ -45,14 +48,14 @@ const SwitchMultiChoiceQuestionComponent = ({ question, getAnswers, onChanged }:
     return (
         <div>
             <p>
-                <div dangerouslySetInnerHTML={{ __html: question.text }} />
+                <div className="comp-ph-question-text" dangerouslySetInnerHTML={{ __html: question.text }} />
             </p>
             <p className="d-flex flex-column">                
                 {question.answers.map(a => 
                     <div className="d-flex flex-row mb-3">
                         <div className="mr-2 mt-1">
                             <ToggleSwitch id={`question_${question.questionId}_anwser_${a.id}`} 
-                                          selected={selectorTexts[getAnswers().filter(h => h[0] === a.id)?.[0]?.[1]] ?? ""} 
+                                          selected={selectorTexts[getAnswers().filter(h => h.answer[0] === a.id)?.[0]?.answer?.[1]] ?? ""} 
                                           values={selectorTexts} 
                                           onChange={val => onSwitched(a.id, val)} />
                         </div>
@@ -61,9 +64,10 @@ const SwitchMultiChoiceQuestionComponent = ({ question, getAnswers, onChanged }:
             </p>
         </div>
     );
-}
+})
 
-const SwitchMultiChoiceQuestionWithCtxComponent = ({ question, getAnswers, onChanged }: MultiChoiceQuestionComponentProps) => {
+const SwitchMultiChoiceQuestionWithCtxComponent = observer((props: MultiChoiceQuestionComponentProps) => {
+    const { question, getAnswers, onChanged } = props;
     if (question.options.displayMode !== 'switch') {
         return null;
     }
@@ -72,8 +76,8 @@ const SwitchMultiChoiceQuestionWithCtxComponent = ({ question, getAnswers, onCha
     const onSwitched = (answerId: number, val: string) => {
         const value = selectorTexts.indexOf(val);
         const newHistory = [ 
-            ...getAnswers().filter(v => v[0] !== answerId),
-            [answerId, value] as [number, number],
+            ...getAnswers().filter(v => v.answer[0] !== answerId),
+            { answer: [answerId, value] as [number, number], isСreatedByUser: true, },
         ];
         onChanged(newHistory);
     }
@@ -84,7 +88,7 @@ const SwitchMultiChoiceQuestionWithCtxComponent = ({ question, getAnswers, onCha
         document.querySelectorAll(`[id^="question_${question.questionId}_answer_"]`).forEach(e => {
             const id = e.id?.split(`question_${question.questionId}_answer_`)[1] ?? -1;
             const component = <ToggleSwitch id={e.id} 
-                                            selected={selectorTexts[getAnswers().filter(h => h[0] === +id)?.[0]?.[1]] ?? ""} 
+                                            selected={selectorTexts[getAnswers().filter(h => h.answer[0] === +id)?.[0]?.answer?.[1]] ?? ""} 
                                             values={selectorTexts} 
                                             onChange={val => onSwitched(+id, val)} />
             ReactDOM.render(component, e);
@@ -96,14 +100,15 @@ const SwitchMultiChoiceQuestionWithCtxComponent = ({ question, getAnswers, onCha
     useEffect(() => {
         // drop all changes
         document.querySelectorAll(`input[id^="question_${question.questionId}_answer_"]`).forEach((e: any) => {
-            const id = +e.id?.split(`question_${question.questionId}_answer_`)[1] ?? -1;
+            const answerId = +e.id?.split(`question_${question.questionId}_answer_`)[1] ?? -1;
             //if (!answersHistory.some(h => h[0] === id)) {
             e.checked = undefined;
             //}                
         });
 
         // apply history changes    
-        getAnswers().forEach(([id, value]) => {
+        getAnswers().forEach(({ answer }) => {
+            const [id, value] = answer;
             const inputId = `question_${question.questionId}_answer_${id}_${selectorTexts[value]}_checkbox`;
             const answr: any = document.getElementById(inputId);
             if (!answr) {
@@ -112,19 +117,20 @@ const SwitchMultiChoiceQuestionWithCtxComponent = ({ question, getAnswers, onCha
             setTimeout(() => answr.checked = true, 10)
             //answr.value = value;
         });
-    }, [question.questionId, getAnswers().map(v => `${v[0]}${v[1]}`).join('')])
+    }, [question.questionId])
     
     return (
         <div>
             <p>
-                <div dangerouslySetInnerHTML={{ __html: question.text }} />
+                <div className="comp-ph-question-text" dangerouslySetInnerHTML={{ __html: question.text }} />
             </p>            
         </div>
     );
-}
+})
 
 
-const DndMultiChoiceQuestionComponent = ({ question, getAnswers, onChanged, answers }: MultiChoiceQuestionComponentProps) => {
+const DndMultiChoiceQuestionComponent = observer((props: MultiChoiceQuestionComponentProps) => {
+    const { question, getAnswers, onChanged, answers } = props;
     if (question.options.displayMode !== 'dragNdrop') {
         return null;
     }
@@ -149,4 +155,4 @@ const DndMultiChoiceQuestionComponent = ({ question, getAnswers, onChanged, answ
     }
 
     return (<DragAndDropMatchingQuestionComponent question={matchingQuestion} getAnswers={getAnswers} onChanged={onChanged} answers={answers}/>)
-}
+})

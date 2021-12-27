@@ -3,17 +3,16 @@ package org.vstu.compprehension.Service;
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.vstu.compprehension.dto.AnswerDto;
 import org.vstu.compprehension.models.businesslogic.*;
 import org.vstu.compprehension.models.businesslogic.backend.Backend;
 import org.vstu.compprehension.models.businesslogic.domains.Domain;
+import org.vstu.compprehension.models.businesslogic.domains.helpers.FactsGraph;
 import org.vstu.compprehension.models.entities.*;
 import org.vstu.compprehension.models.entities.EnumData.FeedbackType;
-import org.vstu.compprehension.models.repository.AnswerObjectRepository;
-import org.vstu.compprehension.models.repository.BackendFactRepository;
-import org.vstu.compprehension.models.repository.QuestionRepository;
+import org.vstu.compprehension.models.repository.*;
 import org.vstu.compprehension.models.entities.EnumData.Language;
 import org.vstu.compprehension.models.entities.EnumData.QuestionType;
-import org.vstu.compprehension.models.repository.ResponseRepository;
 import org.vstu.compprehension.utils.DomainAdapter;
 import org.vstu.compprehension.utils.HyperText;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -44,13 +44,19 @@ public class QuestionService {
     private Backend backend;
 
     @Autowired
+    private BackendService backendService;
+
+    @Autowired
     private DomainService domainService;
+
+    @Autowired
+    private InteractionRepository interactionRepository;
 
     @Autowired
     ResponseRepository responseRepository;
 
     public Question generateQuestion(ExerciseAttemptEntity exerciseAttempt) {
-        Domain domain = DomainAdapter.getDomain(exerciseAttempt.getExercise().getDomain().getName());
+        Domain domain = DomainAdapter.getDomain(exerciseAttempt.getExercise().getDomain().getClassPath());
         QuestionRequest qr = strategy.generateQuestionRequest(exerciseAttempt);
         Question question = domain.makeQuestion(qr, exerciseAttempt.getExercise().getTags(), exerciseAttempt.getUser().getPreferred_language());
         question.getQuestionData().setDomainEntity(domainService.getDomainEntity(domain.getName()));
@@ -58,9 +64,9 @@ public class QuestionService {
         return question;
     }
 
-    public @Nullable Question generateSupplementaryQuestion(@NotNull QuestionEntity sourceQuestion, @NotNull ViolationEntity violation) {
-        val domain = DomainAdapter.getDomain(sourceQuestion.getExerciseAttempt().getExercise().getDomain().getName());
-        val question = domain.makeSupplementaryQuestion(sourceQuestion, violation);
+    public @Nullable Question generateSupplementaryQuestion(@NotNull QuestionEntity sourceQuestion, @NotNull ViolationEntity violation, Language lang) {
+        val domain = DomainAdapter.getDomain(sourceQuestion.getExerciseAttempt().getExercise().getDomain().getClassPath());
+        val question = domain.makeSupplementaryQuestion(sourceQuestion, violation, lang);
         if (question == null) {
             return null;
         }
@@ -70,22 +76,32 @@ public class QuestionService {
     }
 
     public Domain.InterpretSentenceResult judgeSupplementaryQuestion(Question question, List<ResponseEntity> responses, ExerciseAttemptEntity exerciseAttempt) {
-        Domain domain = DomainAdapter.getDomain(exerciseAttempt.getExercise().getDomain().getName());
+        Domain domain = DomainAdapter.getDomain(exerciseAttempt.getExercise().getDomain().getClassPath());
         assertEquals(1, responses.size());
         return domain.judgeSupplementaryQuestion(question, responses.get(0).getLeftAnswerObject());
     }
 
     public Question solveQuestion(Question question, List<Tag> tags) {
-        Domain domain = DomainAdapter.getDomain(question.getQuestionData().getDomainEntity().getName());
-        List<BackendFactEntity> solution = backend.solve(
-                new ArrayList<>(domain.getQuestionPositiveLaws(question.getQuestionDomainType(), tags)),
+        Domain domain = DomainAdapter.getDomain(question.getQuestionData().getDomainEntity().getClassPath());
+        List<BackendFactEntity> solution = backendService.solve(
+                backend,
+                new ArrayList<>(domain.getQuestionLaws(question.getQuestionDomainType(), tags)),
                 question.getStatementFacts(),
                 domain.getSolutionVerbs(question.getQuestionDomainType(), question.getStatementFacts()));
-        question.getQuestionData().setSolutionFacts(solution);
+
+        // carefully update solutionFacts with solution
+        List<BackendFactEntity> storedSolution = question.getQuestionData().getSolutionFacts();
+        if (storedSolution == null) {
+            storedSolution = new ArrayList<>();
+            question.getQuestionData().setSolutionFacts(storedSolution);
+        }
+        FactsGraph.updateFactsList(storedSolution, solution);
+
         saveQuestion(question.getQuestionData());
         return question;
     }
 
+    /*
     public List<ResponseEntity> responseQuestion(Question question, List<Integer> responses) {
         val result = new ArrayList<ResponseEntity>();
         for (val answerId : responses) {
@@ -93,22 +109,27 @@ public class QuestionService {
         }
         return result;
     }
+    */
 
-    public List<ResponseEntity> responseQuestion(Question question, Long[][] responses) {
+    public List<ResponseEntity> responseQuestion(Question question, AnswerDto[] answers) {
         val result = new ArrayList<ResponseEntity>();
-        for (Long[] pair: responses) {
-            AnswerObjectEntity left = question.getAnswerObject(pair[0].intValue());
-            AnswerObjectEntity right = question.getAnswerObject(pair[1].intValue());
-            ResponseEntity response = makeResponse(left, right);
+        for (val answer: answers) {
+            val left = question.getAnswerObject(answer.getAnswer()[0].intValue());
+            val right = question.getAnswerObject(answer.getAnswer()[1].intValue());
+            val createdByInteraction = Optional.ofNullable(answer.getCreatedByInteraction())
+                    .flatMap(id -> interactionRepository.findById(id))
+                    .orElse(null);
+            val response = makeResponse(left, right, createdByInteraction);
             result.add(response);
         }
         return result;
     }
 
     public Domain.InterpretSentenceResult judgeQuestion(Question question, List<ResponseEntity> responses, List<Tag> tags) {
-        Domain domain = DomainAdapter.getDomain(question.getQuestionData().getDomainEntity().getName());
+        Domain domain = DomainAdapter.getDomain(question.getQuestionData().getDomainEntity().getClassPath());
         List<BackendFactEntity> responseFacts = question.responseToFacts(responses);
-        List<BackendFactEntity> violations = backend.judge(
+        List<BackendFactEntity> violations = backendService.judge(
+                backend,
                 new ArrayList<>(domain.getQuestionNegativeLaws(question.getQuestionDomainType(), tags)),
                 question.getStatementFacts(),
                 question.getSolutionFacts(),
@@ -119,8 +140,14 @@ public class QuestionService {
     }
 
     public List<HyperText> explainViolations(Question question, List<ViolationEntity> violations) {
-        Domain domain = DomainAdapter.getDomain(question.getQuestionData().getDomainEntity().getName());
-        return domain.makeExplanation(violations, FeedbackType.EXPLANATION);
+        Domain domain = DomainAdapter.getDomain(question.getQuestionData().getDomainEntity().getClassPath());
+        Language lang;
+        try {
+            lang = question.getQuestionData().getExerciseAttempt().getUser().getPreferred_language(); // The language currently selected in UI
+        } catch (NullPointerException e) {
+            lang = Language.ENGLISH;  // fallback if it cannot be figured out
+        }
+        return domain.makeExplanation(violations, FeedbackType.EXPLANATION, lang);
     }
 
     public Question getQuestion(Long questionId) {
@@ -133,7 +160,7 @@ public class QuestionService {
         return solveQuestion(question, question.getQuestionData().getExerciseAttempt().getExercise().getTags());
     }
 
-    public QuestionEntity getQuestionEntiity(Long questionId) {
+    public QuestionEntity getQuestionEntity(Long questionId) {
         return questionRepository.findById(questionId).get();
     }
 
@@ -177,12 +204,12 @@ public class QuestionService {
     }
 
     public Domain.CorrectAnswer getNextCorrectAnswer(Question question) {
-        Domain domain = DomainAdapter.getDomain(question.getQuestionData().getDomainEntity().getName());
+        Domain domain = DomainAdapter.getDomain(question.getQuestionData().getDomainEntity().getClassPath());
         return domain.getAnyNextCorrectAnswer(question);
     }
-    
-    public Question generateBusinessLogicQuestion(
-            ExerciseAttemptEntity exerciseAttempt) {
+
+    /*
+    public Question generateBusinessLogicQuestion(ExerciseAttemptEntity exerciseAttempt) {
         
         //Генерируем вопрос
         QuestionRequest qr = strategy.generateQuestionRequest(exerciseAttempt);
@@ -196,6 +223,7 @@ public class QuestionService {
         
         return newQuestion;
     }
+    */
 
     public Question generateBusinessLogicQuestion(
             QuestionEntity question) {
@@ -219,10 +247,11 @@ public class QuestionService {
         return response;
     }
 
-    private ResponseEntity makeResponse(AnswerObjectEntity answerL, AnswerObjectEntity answerR) {
+    private ResponseEntity makeResponse(AnswerObjectEntity answerL, AnswerObjectEntity answerR, InteractionEntity createdByInteraction) {
         ResponseEntity response = new ResponseEntity();
         response.setLeftAnswerObject(answerL);
         response.setRightAnswerObject(answerR);
+        response.setCreatedByInteraction(createdByInteraction);
         responseRepository.save(response);
         return response;
     }

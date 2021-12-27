@@ -15,6 +15,7 @@ public abstract class Question implements QuestionFront, QuestionBack {
     
     protected QuestionEntity questionData;
     protected List<String> concepts;
+    protected List<String> negativeLaws;
     protected HashSet<String> tags;
     
     public Question(QuestionEntity questionData) {
@@ -52,6 +53,12 @@ public abstract class Question implements QuestionFront, QuestionBack {
     }
 
     @Override
+    public String getQuestionName() {
+
+        return questionData.getQuestionName();
+    }
+
+    @Override
     public AnswerObjectEntity getAnswerObject(int answerId) {
         return questionData.getAnswerObjects().stream()
                 .filter(a -> a.getAnswerId() == answerId)
@@ -83,6 +90,16 @@ public abstract class Question implements QuestionFront, QuestionBack {
      */
     public HashSet<String> getTags() {
         return tags;
+    }
+    /**
+     * Don't use it for normal questions, only for templates
+     * @return
+     */
+    public List<String> getNegativeLaws() {
+        if (negativeLaws == null) {
+            negativeLaws = new ArrayList<>();
+        }
+        return negativeLaws;
     }
 
     @Override

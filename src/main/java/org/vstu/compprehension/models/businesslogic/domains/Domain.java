@@ -1,6 +1,10 @@
 package org.vstu.compprehension.models.businesslogic.domains;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.web.context.annotation.RequestScope;
 import org.vstu.compprehension.models.businesslogic.*;
 import org.vstu.compprehension.models.businesslogic.Question;
 import org.vstu.compprehension.models.entities.*;
@@ -10,6 +14,8 @@ import org.vstu.compprehension.utils.HyperText;
 
 import java.util.*;
 
+@Log4j2
+@RequestScope
 public abstract class Domain {
     protected List<PositiveLaw> positiveLaws;
     protected List<NegativeLaw> negativeLaws;
@@ -80,6 +86,14 @@ public abstract class Domain {
         return null;
     }
 
+    /**
+     * More interactions a student does, greater possibility to mistake accidentally. A certain rate of mistakes (say 1 of 12) can be considered unintentional so no penalty is assessed.
+     * @return the rate threshold
+     */
+    public double getAcceptableRateOfIgnoredMistakes() {
+        return 0.0834;  // = 1/12
+    }
+
     public Domain() {
     }
 
@@ -116,9 +130,10 @@ public abstract class Domain {
      * Generate explanation of violations
      * @param violations list of student violations
      * @param feedbackType TODO: use feedbackType or delete it
+     * @param lang user preferred language
      * @return explanation for each violation in random order
      */
-    public abstract List<HyperText> makeExplanation(List<ViolationEntity> violations, FeedbackType feedbackType);
+    public abstract List<HyperText> makeExplanation(List<ViolationEntity> violations, FeedbackType feedbackType, Language lang);
 
     /**
      * Get all needed (positive and negative) laws in this questionType
@@ -213,12 +228,19 @@ public abstract class Domain {
     public abstract InterpretSentenceResult interpretSentence(List<BackendFactEntity> violations);
 
     /**
+     * Check that violation has supplementary questions
+     * @param violation info about mistake
+     * @return violation has supplementary questions
+     */
+    public abstract boolean needSupplementaryQuestion(ViolationEntity violation);
+
+    /**
      * Make supplementary question based on violation in last iteration
      * @param violation info about mistake
      * @param sourceQuestion source question
      * @return supplementary question
      */
-    public abstract Question makeSupplementaryQuestion(QuestionEntity sourceQuestion, ViolationEntity violation);
+    public abstract Question makeSupplementaryQuestion(QuestionEntity sourceQuestion, ViolationEntity violation, Language lang);
 
     public abstract InterpretSentenceResult judgeSupplementaryQuestion(Question question, AnswerObjectEntity answer);
 
@@ -232,7 +254,7 @@ public abstract class Domain {
     /**
      * Any available correct answer at current iteration
      */
-    public class CorrectAnswer {
+    public static class CorrectAnswer {
         /**
          * Question
          */
@@ -240,7 +262,7 @@ public abstract class Domain {
         /**
          * Correct answer objects
          */
-        public List<Pair<AnswerObjectEntity, AnswerObjectEntity>> answers;
+        public List<Response> answers;
         /**
          * Text explanation why it chosen
          */
@@ -249,6 +271,12 @@ public abstract class Domain {
          * Positive law name for this answer
          */
         public String lawName;
+
+        @AllArgsConstructor @Data
+        public static class Response {
+            private AnswerObjectEntity left;
+            private AnswerObjectEntity right;
+        }
     }
 
     /**
@@ -257,6 +285,49 @@ public abstract class Domain {
      * @return any correct answer
      */
     public abstract CorrectAnswer getAnyNextCorrectAnswer(Question q);
+
+    /**
+     * Get set of mistakes that can be made by a student when solving remaining part of the task (or whole task if stepsPassed is null or empty)
+     * @param q question
+     * @param completedSteps ignore mistakes possible in these steps
+     * @return set of negative law names (i.e. mistakes)
+     */
+    public abstract Set<String> possibleViolations(Question q, List<ResponseEntity> completedSteps);
+
+    /** Shortcut to `possibleViolations(question, completedSteps=null)`
+     * @param q
+     * @return
+     */
+    public Set<String> possibleViolations(Question q) {
+        return possibleViolations(q, null);
+    }
+
+    /**
+     * Get set of sets of mistakes that can be made by a student when solving remaining part of the task (or whole task if stepsPassed is null or empty)
+     * @param q question
+     * @param completedSteps ignore mistakes possible in these steps
+     * @return set of sets of negative law names (i.e. mistakes)
+     */
+    public abstract Set<Set<String>> possibleViolationsByStep(Question q, List<ResponseEntity> completedSteps);
+
+    /** Shortcut to `possibleViolationsByStep(question, completedSteps=null)`
+     * @param q
+     * @return
+     */
+    public Set<Set<String>> possibleViolationsByStep(Question q) {
+        return possibleViolationsByStep(q, null);
+    }
+
+
+    /**
+     * Find minimum of steps to perform automatically for student, in order to obtain question state when target violations are possible.
+     *  (nextStepWithPossibleViolations - дано - один из сетов ошибок и частичный ответ пользователя, найти - ближайшее к этому ответу состояние с нужным сетом ошибок)
+     * @return list of responses to activate (empty list if no actions are required); null if the desired state is not available till the end of the question.
+    */
+    public List<ResponseEntity> findNextStepWithPossibleViolations(Set<String> targetViolations, Question q, List<ResponseEntity> completedSteps) {
+        return null;
+    }
+
 
     /**
      * Return all question templates
@@ -270,25 +341,29 @@ public abstract class Domain {
      * @return new question template
      */
     public Question findQuestion(List<Tag> tags, Question q) {
-        return findQuestion(tags, new HashSet<>(q.getConcepts()), new HashSet<>(), new HashSet<>(), new HashSet<>(Set.of(q.getQuestionText().getText())));
+        return findQuestion(tags, new HashSet<>(q.getConcepts()), new HashSet<>(), new HashSet<>(q.getNegativeLaws()), new HashSet<>(), new HashSet<>(Set.of(q.getQuestionName())));
     }
 
     /**
      * Find new question template in db
      * @param tags question tags
      * @param targetConcepts concepts that should be in question
-     * @param allowedConcepts concepts that may be in question
      * @param deniedConcepts concepts that should not be in question
+     * @param targetNegativeLaws negative laws that should be in question
+     * @param deniedNegativeLaws negative laws that should not be in question
      * @param forbiddenQuestions texts of question that not suit TODO: use ExerciseAttemptEntity
      * @return new question template
      */
-    public Question findQuestion(List<Tag> tags, HashSet<String> targetConcepts, HashSet<String> allowedConcepts, HashSet<String> deniedConcepts, HashSet<String> forbiddenQuestions) {
+    public Question findQuestion(List<Tag> tags, HashSet<String> targetConcepts, HashSet<String> deniedConcepts, HashSet<String> targetNegativeLaws, HashSet<String> deniedNegativeLaws, HashSet<String> forbiddenQuestions) {
         List<Question> questions = new ArrayList<>();
+
         int maxSuitCount = 0;
+        int minAdditionalCount = 10000;
         for (Question q : getQuestionTemplates()) {
             int targetConceptCount = 0;
+            int anotherConcepts = 0;
             boolean suit = true;
-            if (forbiddenQuestions.contains(q.getQuestionText().getText())) {
+            if (forbiddenQuestions.contains(q.getQuestionName())) {
                 continue;
             }
             for (Tag tag : tags) {
@@ -297,28 +372,52 @@ public abstract class Domain {
                     break;
                 }
             }
+            if (!suit) continue;
             for (String concept : q.getConcepts()) {
                 if (deniedConcepts.contains(concept)) {
                     suit = false;
                     break;
-                }
-                if (targetConcepts.contains(concept)) {
+                } else if (targetConcepts.contains(concept)) {
                     targetConceptCount++;
+                } else {
+                    anotherConcepts++;
                 }
             }
-
-            if (suit && targetConceptCount >= maxSuitCount) {
-                if (targetConceptCount > maxSuitCount) {
-                    questions.clear();
-                    maxSuitCount = targetConceptCount;
+            if (!suit) continue;
+            for (String negativeLaw : q.getNegativeLaws()) {
+                if (deniedNegativeLaws.contains(negativeLaw)) {
+                    suit = false;
+                    break;
+                } else if (targetNegativeLaws.contains(negativeLaw)) {
+                    targetConceptCount++;
+                } else {
+                    anotherConcepts++;
                 }
-                questions.add(q);
+            }
+            if (suit) {
+                if (targetConceptCount > maxSuitCount || targetConceptCount == maxSuitCount && anotherConcepts <= minAdditionalCount) {
+                    if (targetConceptCount > maxSuitCount || anotherConcepts < minAdditionalCount) {
+                        questions.clear();
+                        maxSuitCount = targetConceptCount;
+                        minAdditionalCount = anotherConcepts;
+                    }
+                    questions.add(q);
+                }
             }
         }
         if (questions.isEmpty()) {
             return null;
         } else {
-            return questions.get(new Random().nextInt(questions.size()));
+            for (Question question : questions) {
+                log.info("Отобранный вопрос (из " + questions.size() + "): " + question.getQuestionName());
+            }
+
+            Question question = questions.get(new Random().nextInt(questions.size()));
+            log.info("В итоге, взят вопрос: " + question.getQuestionName());
+
+            return question;
         }
     }
+
+    public abstract List<Concept> getLawConcepts(Law law);
 }

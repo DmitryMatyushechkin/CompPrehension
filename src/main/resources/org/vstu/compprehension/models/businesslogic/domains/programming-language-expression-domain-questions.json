@@ -5,8 +5,8 @@
       "questionType": "ORDER",
       "questionDomainType": "OrderOperators",
       "questionText": "a + b + c",
-      "areAnswersRequireContext": true,
       "options": {
+        "requireContext": true
       },
       "answerObjects": [
         {
@@ -33,13 +33,15 @@
           "object": "a"
         },
         {
-          "object": "+"
+          "object": "+",
+          "subject": "operator"
         },
         {
           "object": "b"
         },
         {
-          "object": "+"
+          "object": "+",
+          "subject": "operator"
         },
         {
           "object": "c"
@@ -50,6 +52,9 @@
       "associativity",
       "operator_binary_+",
       "SystemIntegrationTest"
+    ],
+    "negativeLaws": [
+      "error_base_same_precedence_left_associativity_left"
     ],
     "tags": [
       "C++",
@@ -65,8 +70,8 @@
       "questionType": "ORDER",
       "questionDomainType": "OrderOperators",
       "questionText": "a == b < c",
-      "areAnswersRequireContext": true,
       "options": {
+        "requireContext": true
       },
       "answerObjects": [
         {
@@ -93,13 +98,15 @@
           "object": "a"
         },
         {
-          "object": "=="
+          "object": "==",
+          "subject": "operator"
         },
         {
           "object": "b"
         },
         {
-          "object": "<"
+          "object": "<",
+          "subject": "operator"
         },
         {
           "object": "c"
@@ -111,6 +118,9 @@
       "operator_binary_==",
       "operator_binary_<",
       "SystemIntegrationTest"
+    ],
+    "negativeLaws": [
+      "error_base_higher_precedence_right"
     ],
     "tags": [
       "C++",
@@ -126,8 +136,8 @@
       "questionType": "ORDER",
       "questionDomainType": "OrderOperators",
       "questionText": "a + b + c * d",
-      "areAnswersRequireContext": true,
       "options": {
+        "requireContext": true
       },
       "answerObjects": [
         {
@@ -163,19 +173,22 @@
           "object": "a"
         },
         {
-          "object": "+"
+          "object": "+",
+          "subject": "operator"
         },
         {
           "object": "b"
         },
         {
-          "object": "+"
+          "object": "+",
+          "subject": "operator"
         },
         {
           "object": "c"
         },
         {
-          "object": "*"
+          "object": "*",
+          "subject": "operator"
         },
         {
           "object": "d"
@@ -188,6 +201,10 @@
       "operator_binary_+",
       "operator_binary_*",
       "SystemIntegrationTest"
+    ],
+    "negativeLaws": [
+      "error_base_higher_precedence_right",
+      "error_base_same_precedence_left_associativity_left"
     ],
     "tags": [
       "C++",
@@ -203,8 +220,8 @@
       "questionType": "ORDER",
       "questionDomainType": "OrderOperators",
       "questionText": "a + b * c || d + e * f",
-      "areAnswersRequireContext": true,
       "options": {
+        "requireContext": true
       },
       "answerObjects": [
         {
@@ -258,31 +275,36 @@
           "object": "a"
         },
         {
-          "object": "+"
+          "object": "+",
+          "subject": "operator"
         },
         {
           "object": "b"
         },
         {
-          "object": "*"
+          "object": "*",
+          "subject": "operator"
         },
         {
           "object": "c"
         },
         {
-          "object": "||"
+          "object": "||",
+          "subject": "operator"
         },
         {
           "object": "d"
         },
         {
-          "object": "+"
+          "object": "+",
+          "subject": "operator"
         },
         {
           "object": "e"
         },
         {
-          "object": "*"
+          "object": "*",
+          "subject": "operator"
         },
         {
           "object": "f"
@@ -298,6 +320,10 @@
       "operator_binary_||",
       "SystemIntegrationTest"
     ],
+    "negativeLaws": [
+      "error_base_student_error_strict_operands_order_base",
+      "error_base_higher_precedence_right"
+    ],
     "tags": [
       "C++",
       "basics",
@@ -312,8 +338,8 @@
       "questionType": "ORDER",
       "questionDomainType": "OrderOperators",
       "questionText": "a * b + c * d",
-      "areAnswersRequireContext": true,
       "options": {
+        "requireContext": true
       },
       "answerObjects": [
         {
@@ -349,19 +375,22 @@
           "object": "a"
         },
         {
-          "object": "*"
+          "object": "*",
+          "subject": "operator"
         },
         {
           "object": "b"
         },
         {
-          "object": "+"
+          "object": "+",
+          "subject": "operator"
         },
         {
           "object": "c"
         },
         {
-          "object": "*"
+          "object": "*",
+          "subject": "operator"
         },
         {
           "object": "d"
@@ -369,10 +398,13 @@
       ]
     },
     "concepts": [
-      "associativity",
       "precedence",
       "operator_binary_+",
       "operator_binary_*"
+    ],
+    "negativeLaws": [
+      "error_base_higher_precedence_left",
+      "error_base_higher_precedence_right"
     ],
     "tags": [
       "C++",
@@ -388,8 +420,8 @@
       "questionType": "ORDER",
       "questionDomainType": "OrderOperators",
       "questionText": "a + b ? c + d : e + f",
-      "areAnswersRequireContext": true,
       "options": {
+        "requireContext": true
       },
       "answerObjects": [
         {
@@ -434,19 +466,22 @@
           "object": "a"
         },
         {
-          "object": "+"
+          "object": "+",
+          "subject": "operator"
         },
         {
           "object": "b"
         },
         {
-          "object": "?"
+          "object": "?",
+          "subject": "operator"
         },
         {
           "object": "c"
         },
         {
-          "object": "+"
+          "object": "+",
+          "subject": "operator"
         },
         {
           "object": "d"
@@ -458,7 +493,8 @@
           "object": "e"
         },
         {
-          "object": "+"
+          "object": "+",
+          "subject": "operator"
         },
         {
           "object": "f"
@@ -470,6 +506,9 @@
       "operator_binary_+",
       "operator_ternary",
       "operator_evaluating_left_operand_first"
+    ],
+    "negativeLaws": [
+      "error_base_student_error_strict_operands_order_base"
     ],
     "tags": [
       "C++",
@@ -485,8 +524,8 @@
       "questionType": "ORDER",
       "questionDomainType": "OrderOperators",
       "questionText": "-- a + b",
-      "areAnswersRequireContext": true,
       "options": {
+        "requireContext": true
       },
       "answerObjects": [
         {
@@ -510,13 +549,15 @@
       ],
       "statementFacts": [
         {
-          "object": "--"
+          "object": "--",
+          "subject": "operator"
         },
         {
           "object": "a"
         },
         {
-          "object": "+"
+          "object": "+",
+          "subject": "operator"
         },
         {
           "object": "b"
@@ -527,6 +568,9 @@
       "precedence",
       "operator_binary_+",
       "operator_prefix_--"
+    ],
+    "negativeLaws": [
+      "error_base_higher_precedence_left"
     ],
     "tags": [
       "C++",
@@ -542,8 +586,8 @@
       "questionType": "ORDER",
       "questionDomainType": "OrderOperators",
       "questionText": "-- -- a",
-      "areAnswersRequireContext": true,
       "options": {
+        "requireContext": true
       },
       "answerObjects": [
         {
@@ -567,10 +611,12 @@
       ],
       "statementFacts": [
         {
-          "object": "--"
+          "object": "--",
+          "subject": "operator"
         },
         {
-          "object": "--"
+          "object": "--",
+          "subject": "operator"
         },
         {
           "object": "a"
@@ -580,6 +626,73 @@
     "concepts": [
       "associativity",
       "operator_prefix_--"
+    ],
+    "negativeLaws": [
+      "error_base_same_precedence_right_associativity_right"
+    ],
+    "tags": [
+      "C++",
+      "basics",
+      "operators",
+      "order",
+      "evaluation"
+    ]
+  },
+  {
+    "questionType": "ORDERING",
+    "questionData": {
+      "questionType": "ORDER",
+      "questionDomainType": "OrderOperators",
+      "questionText": "a = b = c",
+      "options": {
+        "requireContext": true
+      },
+      "answerObjects": [
+        {
+          "answerId": 0,
+          "hyperText": "= between a and b",
+          "domainInfo": "op__0__2",
+          "isRightCol": false,
+          "concept": "operator=",
+          "responsesLeft": [],
+          "responsesRight": []
+        },
+        {
+          "answerId": 1,
+          "hyperText": "= between b and c",
+          "domainInfo": "op__0__4",
+          "isRightCol": false,
+          "concept": "operator=",
+          "responsesLeft": [],
+          "responsesRight": []
+        }
+      ],
+      "statementFacts": [
+        {
+          "object": "a"
+        },
+        {
+          "object": "=",
+          "subject": "operator"
+        },
+        {
+          "object": "b"
+        },
+        {
+          "object": "=",
+          "subject": "operator"
+        },
+        {
+          "object": "c"
+        }
+      ]
+    },
+    "concepts": [
+      "associativity",
+      "operator="
+    ],
+    "negativeLaws": [
+      "error_base_same_precedence_right_associativity_right"
     ],
     "tags": [
       "C++",
@@ -595,8 +708,8 @@
       "questionType": "ORDER",
       "questionDomainType": "OrderOperators",
       "questionText": "-- ( -- a )",
-      "areAnswersRequireContext": true,
       "options": {
+        "requireContext": true
       },
       "answerObjects": [
         {
@@ -620,13 +733,15 @@
       ],
       "statementFacts": [
         {
-          "object": "--"
+          "object": "--",
+          "subject": "operator"
         },
         {
           "object": "("
         },
         {
-          "object": "--"
+          "object": "--",
+          "subject": "operator"
         },
         {
           "object": "a"
@@ -640,6 +755,9 @@
       "associativity",
       "operator_prefix_--",
       "two_token_unary"
+    ],
+    "negativeLaws": [
+      "error_base_student_error_in_complex"
     ],
     "tags": [
       "C++",
@@ -655,8 +773,8 @@
       "questionType": "ORDER",
       "questionDomainType": "OrderOperators",
       "questionText": "- -- a",
-      "areAnswersRequireContext": true,
       "options": {
+        "requireContext": true
       },
       "answerObjects": [
         {
@@ -680,10 +798,12 @@
       ],
       "statementFacts": [
         {
-          "object": "-"
+          "object": "-",
+          "subject": "operator"
         },
         {
-          "object": "--"
+          "object": "--",
+          "subject": "operator"
         },
         {
           "object": "a"
@@ -694,6 +814,9 @@
       "precedence",
       "operator_prefix_--",
       "operator_binary_-"
+    ],
+    "negativeLaws": [
+      "error_base_higher_precedence_right"
     ],
     "tags": [
       "C++",
@@ -709,8 +832,8 @@
       "questionType": "ORDER",
       "questionDomainType": "OrderOperators",
       "questionText": "a && b || c",
-      "areAnswersRequireContext": true,
       "options": {
+        "requireContext": true
       },
       "answerObjects": [
         {
@@ -737,13 +860,15 @@
           "object": "a"
         },
         {
-          "object": "&&"
+          "object": "&&",
+          "subject": "operator"
         },
         {
           "object": "b"
         },
         {
-          "object": "||"
+          "object": "||",
+          "subject": "operator"
         },
         {
           "object": "c"
@@ -754,6 +879,9 @@
       "precedence",
       "operator_binary_&&",
       "operator_binary_||"
+    ],
+    "negativeLaws": [
+      "error_base_higher_precedence_left"
     ],
     "tags": [
       "C++",
@@ -769,8 +897,8 @@
       "questionType": "ORDER",
       "questionDomainType": "OrderOperators",
       "questionText": "a && ( b || c )",
-      "areAnswersRequireContext": true,
       "options": {
+        "requireContext": true
       },
       "answerObjects": [
         {
@@ -797,7 +925,8 @@
           "object": "a"
         },
         {
-          "object": "&&"
+          "object": "&&",
+          "subject": "operator"
         },
         {
           "object": "("
@@ -806,7 +935,8 @@
           "object": "b"
         },
         {
-          "object": "||"
+          "object": "||",
+          "subject": "operator"
         },
         {
           "object": "c"
@@ -822,6 +952,9 @@
       "operator_binary_&&",
       "operator_binary_||"
     ],
+    "negativeLaws": [
+      "error_base_student_error_in_complex"
+    ],
     "tags": [
       "C++",
       "basics",
@@ -836,8 +969,8 @@
       "questionType": "ORDER",
       "questionDomainType": "OrderOperators",
       "questionText": "a && ( b || c ) && d",
-      "areAnswersRequireContext": true,
       "options": {
+        "requireContext": true
       },
       "answerObjects": [
         {
@@ -873,7 +1006,8 @@
           "object": "a"
         },
         {
-          "object": "&&"
+          "object": "&&",
+          "subject": "operator"
         },
         {
           "object": "("
@@ -882,7 +1016,8 @@
           "object": "b"
         },
         {
-          "object": "||"
+          "object": "||",
+          "subject": "operator"
         },
         {
           "object": "c"
@@ -891,7 +1026,8 @@
           "object": ")"
         },
         {
-          "object": "&&"
+          "object": "&&",
+          "subject": "operator"
         },
         {
           "object": "d"
@@ -904,6 +1040,10 @@
       "two_token_unary",
       "operator_binary_&&",
       "operator_binary_||"
+    ],
+    "negativeLaws": [
+      "error_base_student_error_in_complex",
+      "error_base_same_precedence_left_associativity_left"
     ],
     "tags": [
       "C++",
@@ -919,8 +1059,8 @@
       "questionType": "ORDER",
       "questionDomainType": "OrderOperators",
       "questionText": "a || ( b || c , d || e )",
-      "areAnswersRequireContext": true,
       "options": {
+        "requireContext": true
       },
       "answerObjects": [
         {
@@ -965,7 +1105,8 @@
           "object": "a"
         },
         {
-          "object": "||"
+          "object": "||",
+          "subject": "operator"
         },
         {
           "object": "("
@@ -974,19 +1115,22 @@
           "object": "b"
         },
         {
-          "object": "||"
+          "object": "||",
+          "subject": "operator"
         },
         {
           "object": "c"
         },
         {
-          "object": ","
+          "object": ",",
+          "subject": "operator"
         },
         {
           "object": "d"
         },
         {
-          "object": "||"
+          "object": "||",
+          "subject": "operator"
         },
         {
           "object": "e"
@@ -1003,6 +1147,10 @@
       "operator_binary_,",
       "operator_evaluating_left_operand_first"
     ],
+    "negativeLaws": [
+      "error_base_student_error_in_complex",
+      "error_base_student_error_strict_operands_order_base"
+    ],
     "tags": [
       "C++",
       "basics",
@@ -1017,8 +1165,8 @@
       "questionType": "ORDER",
       "questionDomainType": "OrderOperators",
       "questionText": "a + ( b + c < d + e )",
-      "areAnswersRequireContext": true,
       "options": {
+        "requireContext": true
       },
       "answerObjects": [
         {
@@ -1063,7 +1211,8 @@
           "object": "a"
         },
         {
-          "object": "+"
+          "object": "+",
+          "subject": "operator"
         },
         {
           "object": "("
@@ -1072,19 +1221,22 @@
           "object": "b"
         },
         {
-          "object": "+"
+          "object": "+",
+          "subject": "operator"
         },
         {
           "object": "c"
         },
         {
-          "object": "<"
+          "object": "<",
+          "subject": "operator"
         },
         {
           "object": "d"
         },
         {
-          "object": "+"
+          "object": "+",
+          "subject": "operator"
         },
         {
           "object": "e"
@@ -1100,6 +1252,11 @@
       "operator_binary_+",
       "operator_binary_<"
     ],
+    "negativeLaws": [
+      "error_base_student_error_in_complex",
+      "error_base_higher_precedence_left",
+      "error_base_higher_precedence_right"
+    ],
     "tags": [
       "C++",
       "basics",
@@ -1114,8 +1271,8 @@
       "questionType": "ORDER",
       "questionDomainType": "OrderOperators",
       "questionText": "a || f ( b || c , d || e )",
-      "areAnswersRequireContext": true,
       "options": {
+        "requireContext": true
       },
       "answerObjects": [
         {
@@ -1160,19 +1317,22 @@
           "object": "a"
         },
         {
-          "object": "||"
+          "object": "||",
+          "subject": "operator"
         },
         {
           "object": "f"
         },
         {
-          "object": "("
+          "object": "(",
+          "subject": "operator"
         },
         {
           "object": "b"
         },
         {
-          "object": "||"
+          "object": "||",
+          "subject": "operator"
         },
         {
           "object": "c"
@@ -1184,7 +1344,8 @@
           "object": "d"
         },
         {
-          "object": "||"
+          "object": "||",
+          "subject": "operator"
         },
         {
           "object": "e"
@@ -1198,6 +1359,10 @@
       "precedence",
       "function_call",
       "operator_binary_||"
+    ],
+    "negativeLaws": [
+      "error_base_student_error_in_complex",
+      "error_base_higher_precedence_right"
     ],
     "tags": [
       "C++",
@@ -1213,8 +1378,8 @@
       "questionType": "ORDER",
       "questionDomainType": "OrderOperators",
       "questionText": "* ++ a",
-      "areAnswersRequireContext": true,
       "options": {
+        "requireContext": true
       },
       "answerObjects": [
         {
@@ -1238,10 +1403,12 @@
       ],
       "statementFacts": [
         {
-          "object": "*"
+          "object": "*",
+          "subject": "operator"
         },
         {
-          "object": "++"
+          "object": "++",
+          "subject": "operator"
         },
         {
           "object": "a"
@@ -1252,6 +1419,9 @@
       "associativity",
       "operator_unary_*",
       "operator_prefix_++"
+    ],
+    "negativeLaws": [
+      "error_base_higher_precedence_right"
     ],
     "tags": [
       "C++",
@@ -1267,8 +1437,8 @@
       "questionType": "ORDER",
       "questionDomainType": "OrderOperators",
       "questionText": "* ++ a + b",
-      "areAnswersRequireContext": true,
       "options": {
+        "requireContext": true
       },
       "answerObjects": [
         {
@@ -1301,16 +1471,19 @@
       ],
       "statementFacts": [
         {
-          "object": "*"
+          "object": "*",
+          "subject": "operator"
         },
         {
-          "object": "++"
+          "object": "++",
+          "subject": "operator"
         },
         {
           "object": "a"
         },
         {
-          "object": "+"
+          "object": "+",
+          "subject": "operator"
         },
         {
           "object": "b"
@@ -1318,11 +1491,14 @@
       ]
     },
     "concepts": [
-      "associativity",
       "precedence",
       "operator_unary_*",
       "operator_prefix_++",
       "operator_binary_+"
+    ],
+    "negativeLaws": [
+      "error_base_higher_precedence_right",
+      "error_base_higher_precedence_left"
     ],
     "tags": [
       "C++",
@@ -1338,8 +1514,8 @@
       "questionType": "ORDER",
       "questionDomainType": "OrderOperators",
       "questionText": "* a [ b + c ] + e",
-      "areAnswersRequireContext": true,
       "options": {
+        "requireContext": true
       },
       "answerObjects": [
         {
@@ -1381,19 +1557,22 @@
       ],
       "statementFacts": [
         {
-          "object": "*"
+          "object": "*",
+          "subject": "operator"
         },
         {
           "object": "a"
         },
         {
-          "object": "["
+          "object": "[",
+          "subject": "operator"
         },
         {
           "object": "b"
         },
         {
-          "object": "+"
+          "object": "+",
+          "subject": "operator"
         },
         {
           "object": "c"
@@ -1402,7 +1581,8 @@
           "object": "]"
         },
         {
-          "object": "+"
+          "object": "+",
+          "subject": "operator"
         },
         {
           "object": "e"
@@ -1414,6 +1594,10 @@
       "operator_binary_+",
       "operator_[",
       "operator_unary_*"
+    ],
+    "negativeLaws": [
+      "error_base_student_error_in_complex",
+      "error_base_higher_precedence_left"
     ],
     "tags": [
       "C++",
@@ -1429,8 +1613,8 @@
       "questionType": "ORDER",
       "questionDomainType": "OrderOperators",
       "questionText": "a + b [ c + d ] + e",
-      "areAnswersRequireContext": true,
       "options": {
+        "requireContext": true
       },
       "answerObjects": [
         {
@@ -1475,19 +1659,22 @@
           "object": "a"
         },
         {
-          "object": "+"
+          "object": "+",
+          "subject": "operator"
         },
         {
           "object": "b"
         },
         {
-          "object": "["
+          "object": "[",
+          "subject": "operator"
         },
         {
           "object": "c"
         },
         {
-          "object": "+"
+          "object": "+",
+          "subject": "operator"
         },
         {
           "object": "d"
@@ -1496,7 +1683,8 @@
           "object": "]"
         },
         {
-          "object": "+"
+          "object": "+",
+          "subject": "operator"
         },
         {
           "object": "e"
@@ -1508,6 +1696,12 @@
       "precedence",
       "operator_binary_+",
       "operator_["
+    ],
+    "negativeLaws": [
+      "error_base_student_error_in_complex",
+      "error_base_same_precedence_left_associativity_left",
+      "error_base_higher_precedence_left",
+      "error_base_higher_precedence_right"
     ],
     "tags": [
       "C++",
@@ -1523,8 +1717,8 @@
       "questionType": "ORDER",
       "questionDomainType": "OrderOperators",
       "questionText": "a + b ? c + d : e + f ? g + h : i + j",
-      "areAnswersRequireContext": true,
       "options": {
+        "requireContext": true
       },
       "answerObjects": [
         {
@@ -1596,19 +1790,22 @@
           "object": "a"
         },
         {
-          "object": "+"
+          "object": "+",
+          "subject": "operator"
         },
         {
           "object": "b"
         },
         {
-          "object": "?"
+          "object": "?",
+          "subject": "operator"
         },
         {
           "object": "c"
         },
         {
-          "object": "+"
+          "object": "+",
+          "subject": "operator"
         },
         {
           "object": "d"
@@ -1620,19 +1817,22 @@
           "object": "e"
         },
         {
-          "object": "+"
+          "object": "+",
+          "subject": "operator"
         },
         {
           "object": "f"
         },
         {
-          "object": "?"
+          "object": "?",
+          "subject": "operator"
         },
         {
           "object": "g"
         },
         {
-          "object": "+"
+          "object": "+",
+          "subject": "operator"
         },
         {
           "object": "h"
@@ -1644,7 +1844,8 @@
           "object": "i"
         },
         {
-          "object": "+"
+          "object": "+",
+          "subject": "operator"
         },
         {
           "object": "j"
@@ -1656,6 +1857,10 @@
       "precedence",
       "operator_binary_+",
       "operator_ternary"
+    ],
+    "negativeLaws": [
+      "error_base_same_precedence_right_associativity_right",
+      "error_base_student_error_strict_operands_order_base"
     ],
     "tags": [
       "C++",
@@ -1671,8 +1876,8 @@
       "questionType": "ORDER",
       "questionDomainType": "OrderOperators",
       "questionText": "++ a || b + c",
-      "areAnswersRequireContext": true,
       "options": {
+        "requireContext": true
       },
       "answerObjects": [
         {
@@ -1705,19 +1910,22 @@
       ],
       "statementFacts": [
         {
-          "object": "++"
+          "object": "++",
+          "subject": "operator"
         },
         {
           "object": "a"
         },
         {
-          "object": "||"
+          "object": "||",
+          "subject": "operator"
         },
         {
           "object": "b"
         },
         {
-          "object": "+"
+          "object": "+",
+          "subject": "operator"
         },
         {
           "object": "c"
@@ -1730,6 +1938,9 @@
       "operator_binary_+",
       "operator_binary_||",
       "operator_evaluating_left_operand_first"
+    ],
+    "negativeLaws": [
+      "error_base_student_error_strict_operands_order_base"
     ],
     "tags": [
       "C++",
@@ -1744,9 +1955,9 @@
     "questionData": {
       "questionType": "ORDER",
       "questionDomainType": "OrderOperators",
-      "questionText": "++ a || b + c",
-      "areAnswersRequireContext": true,
+      "questionText": "++ a - b + c",
       "options": {
+        "requireContext": true
       },
       "answerObjects": [
         {
@@ -1779,19 +1990,22 @@
       ],
       "statementFacts": [
         {
-          "object": "++"
+          "object": "++",
+          "subject": "operator"
         },
         {
           "object": "a"
         },
         {
-          "object": "-"
+          "object": "-",
+          "subject": "operator"
         },
         {
           "object": "b"
         },
         {
-          "object": "+"
+          "object": "+",
+          "subject": "operator"
         },
         {
           "object": "c"
@@ -1803,6 +2017,10 @@
       "operator_prefix_++",
       "operator_binary_+",
       "operator_binary_-"
+    ],
+    "negativeLaws": [
+      "error_base_higher_precedence_left",
+      "error_base_same_precedence_left_associativity_left"
     ],
     "tags": [
       "C++",
@@ -1819,8 +2037,8 @@
       "questionType": "ORDER",
       "questionDomainType": "OrderOperators",
       "questionText": "a + b + c",
-      "areAnswersRequireContext": true,
       "options": {
+        "requireContext": true
       },
       "answerObjects": [
         {
@@ -1847,13 +2065,15 @@
           "object": "a"
         },
         {
-          "object": "+"
+          "object": "+",
+          "subject": "operator"
         },
         {
           "object": "b"
         },
         {
-          "object": "+"
+          "object": "+",
+          "subject": "operator"
         },
         {
           "object": "c"
@@ -1864,6 +2084,9 @@
       "associativity",
       "operator_binary_+",
       "SystemIntegrationTest"
+    ],
+    "negativeLaws": [
+      "error_base_same_precedence_left_associativity_left"
     ],
     "tags": [
       "Python",
@@ -1879,8 +2102,8 @@
       "questionType": "ORDER",
       "questionDomainType": "OrderOperators",
       "questionText": "a == b < c",
-      "areAnswersRequireContext": true,
       "options": {
+        "requireContext": true
       },
       "answerObjects": [
         {
@@ -1907,13 +2130,15 @@
           "object": "a"
         },
         {
-          "object": "=="
+          "object": "==",
+          "subject": "operator"
         },
         {
           "object": "b"
         },
         {
-          "object": "<"
+          "object": "<",
+          "subject": "operator"
         },
         {
           "object": "c"
@@ -1925,6 +2150,8 @@
       "operator_binary_==",
       "operator_binary_<",
       "SystemIntegrationTest"
+    ],
+    "negativeLaws": [
     ],
     "tags": [
       "Python",
@@ -1940,8 +2167,8 @@
       "questionType": "ORDER",
       "questionDomainType": "OrderOperators",
       "questionText": "a + b + c * d",
-      "areAnswersRequireContext": true,
       "options": {
+        "requireContext": true
       },
       "answerObjects": [
         {
@@ -1977,19 +2204,22 @@
           "object": "a"
         },
         {
-          "object": "+"
+          "object": "+",
+          "subject": "operator"
         },
         {
           "object": "b"
         },
         {
-          "object": "+"
+          "object": "+",
+          "subject": "operator"
         },
         {
           "object": "c"
         },
         {
-          "object": "*"
+          "object": "*",
+          "subject": "operator"
         },
         {
           "object": "d"
@@ -2002,6 +2232,8 @@
       "operator_binary_+",
       "operator_binary_*",
       "SystemIntegrationTest"
+    ],
+    "negativeLaws": [
     ],
     "tags": [
       "Python",
@@ -2017,8 +2249,8 @@
       "questionType": "ORDER",
       "questionDomainType": "OrderOperators",
       "questionText": "a * b + c * d",
-      "areAnswersRequireContext": true,
       "options": {
+        "requireContext": true
       },
       "answerObjects": [
         {
@@ -2054,19 +2286,22 @@
           "object": "a"
         },
         {
-          "object": "*"
+          "object": "*",
+          "subject": "operator"
         },
         {
           "object": "b"
         },
         {
-          "object": "+"
+          "object": "+",
+          "subject": "operator"
         },
         {
           "object": "c"
         },
         {
-          "object": "*"
+          "object": "*",
+          "subject": "operator"
         },
         {
           "object": "d"
@@ -2078,6 +2313,8 @@
       "precedence",
       "operator_binary_+",
       "operator_binary_*"
+    ],
+    "negativeLaws": [
     ],
     "tags": [
       "Python",
@@ -2093,8 +2330,8 @@
       "questionType": "ORDER",
       "questionDomainType": "OrderOperators",
       "questionText": "a + b if c + d else e + f",
-      "areAnswersRequireContext": true,
       "options": {
+        "requireContext": true
       },
       "answerObjects": [
         {
@@ -2139,19 +2376,22 @@
           "object": "a"
         },
         {
-          "object": "+"
+          "object": "+",
+          "subject": "operator"
         },
         {
           "object": "b"
         },
         {
-          "object": "if"
+          "object": "if",
+          "subject": "operator"
         },
         {
           "object": "c"
         },
         {
-          "object": "+"
+          "object": "+",
+          "subject": "operator"
         },
         {
           "object": "d"
@@ -2163,7 +2403,8 @@
           "object": "e"
         },
         {
-          "object": "+"
+          "object": "+",
+          "subject": "operator"
         },
         {
           "object": "f"
@@ -2174,6 +2415,8 @@
       "precedence",
       "operator_binary_+",
       "operator_ternary"
+    ],
+    "negativeLaws": [
     ],
     "tags": [
       "Python",
@@ -2189,8 +2432,8 @@
       "questionType": "ORDER",
       "questionDomainType": "OrderOperators",
       "questionText": "a and b or c",
-      "areAnswersRequireContext": true,
       "options": {
+        "requireContext": true
       },
       "answerObjects": [
         {
@@ -2217,13 +2460,15 @@
           "object": "a"
         },
         {
-          "object": "and"
+          "object": "and",
+          "subject": "operator"
         },
         {
           "object": "b"
         },
         {
-          "object": "or"
+          "object": "or",
+          "subject": "operator"
         },
         {
           "object": "c"
@@ -2234,6 +2479,8 @@
       "precedence",
       "operator_binary_and",
       "operator_binary_or"
+    ],
+    "negativeLaws": [
     ],
     "tags": [
       "Python",
@@ -2249,8 +2496,8 @@
       "questionType": "ORDER",
       "questionDomainType": "OrderOperators",
       "questionText": "a and ( b or c )",
-      "areAnswersRequireContext": true,
       "options": {
+        "requireContext": true
       },
       "answerObjects": [
         {
@@ -2277,7 +2524,8 @@
           "object": "a"
         },
         {
-          "object": "and"
+          "object": "and",
+          "subject": "operator"
         },
         {
           "object": "("
@@ -2286,7 +2534,8 @@
           "object": "b"
         },
         {
-          "object": "or"
+          "object": "or",
+          "subject": "operator"
         },
         {
           "object": "c"
@@ -2302,6 +2551,8 @@
       "operator_binary_and",
       "operator_binary_or"
     ],
+    "negativeLaws": [
+    ],
     "tags": [
       "Python",
       "basics",
@@ -2316,8 +2567,8 @@
       "questionType": "ORDER",
       "questionDomainType": "OrderOperators",
       "questionText": "a and ( b or c ) and d",
-      "areAnswersRequireContext": true,
       "options": {
+        "requireContext": true
       },
       "answerObjects": [
         {
@@ -2353,7 +2604,8 @@
           "object": "a"
         },
         {
-          "object": "and"
+          "object": "and",
+          "subject": "operator"
         },
         {
           "object": "("
@@ -2362,7 +2614,8 @@
           "object": "b"
         },
         {
-          "object": "or"
+          "object": "or",
+          "subject": "operator"
         },
         {
           "object": "c"
@@ -2371,7 +2624,8 @@
           "object": ")"
         },
         {
-          "object": "and"
+          "object": "and",
+          "subject": "operator"
         },
         {
           "object": "d"
@@ -2384,6 +2638,8 @@
       "two_token_unary",
       "operator_binary_and",
       "operator_binary_or"
+    ],
+    "negativeLaws": [
     ],
     "tags": [
       "Python",
@@ -2399,8 +2655,8 @@
       "questionType": "ORDER",
       "questionDomainType": "OrderOperators",
       "questionText": "a or ( b or c , d or e )",
-      "areAnswersRequireContext": true,
       "options": {
+        "requireContext": true
       },
       "answerObjects": [
         {
@@ -2436,16 +2692,19 @@
           "object": "a"
         },
         {
-          "object": "or"
+          "object": "or",
+          "subject": "operator"
         },
         {
-          "object": "("
+          "object": "(",
+          "subject": "operator"
         },
         {
           "object": "b"
         },
         {
-          "object": "or"
+          "object": "or",
+          "subject": "operator"
         },
         {
           "object": "c"
@@ -2457,7 +2716,8 @@
           "object": "d"
         },
         {
-          "object": "or"
+          "object": "or",
+          "subject": "operator"
         },
         {
           "object": "e"
@@ -2471,6 +2731,8 @@
       "precedence",
       "two_token_unary",
       "operator_binary_or"
+    ],
+    "negativeLaws": [
     ],
     "tags": [
       "Python",
@@ -2486,8 +2748,8 @@
       "questionType": "ORDER",
       "questionDomainType": "OrderOperators",
       "questionText": "a + ( b + c < d + e )",
-      "areAnswersRequireContext": true,
       "options": {
+        "requireContext": true
       },
       "answerObjects": [
         {
@@ -2532,7 +2794,8 @@
           "object": "a"
         },
         {
-          "object": "+"
+          "object": "+",
+          "subject": "operator"
         },
         {
           "object": "("
@@ -2541,19 +2804,22 @@
           "object": "b"
         },
         {
-          "object": "+"
+          "object": "+",
+          "subject": "operator"
         },
         {
           "object": "c"
         },
         {
-          "object": "<"
+          "object": "<",
+          "subject": "operator"
         },
         {
           "object": "d"
         },
         {
-          "object": "+"
+          "object": "+",
+          "subject": "operator"
         },
         {
           "object": "e"
@@ -2569,6 +2835,8 @@
       "operator_binary_+",
       "operator_binary_<"
     ],
+    "negativeLaws": [
+    ],
     "tags": [
       "Python",
       "basics",
@@ -2583,8 +2851,8 @@
       "questionType": "ORDER",
       "questionDomainType": "OrderOperators",
       "questionText": "a or f ( b or c , d or e )",
-      "areAnswersRequireContext": true,
       "options": {
+        "requireContext": true
       },
       "answerObjects": [
         {
@@ -2629,19 +2897,22 @@
           "object": "a"
         },
         {
-          "object": "or"
+          "object": "or",
+          "subject": "operator"
         },
         {
           "object": "f"
         },
         {
-          "object": "("
+          "object": "(",
+          "subject": "operator"
         },
         {
           "object": "b"
         },
         {
-          "object": "or"
+          "object": "or",
+          "subject": "operator"
         },
         {
           "object": "c"
@@ -2653,7 +2924,8 @@
           "object": "d"
         },
         {
-          "object": "or"
+          "object": "or",
+          "subject": "operator"
         },
         {
           "object": "e"
@@ -2667,6 +2939,8 @@
       "precedence",
       "function_call",
       "operator_binary_or"
+    ],
+    "negativeLaws": [
     ],
     "tags": [
       "Python",
@@ -2682,8 +2956,8 @@
       "questionType": "ORDER",
       "questionDomainType": "OrderOperators",
       "questionText": "a [ b + c ] + e",
-      "areAnswersRequireContext": true,
       "options": {
+        "requireContext": true
       },
       "answerObjects": [
         {
@@ -2719,13 +2993,15 @@
           "object": "a"
         },
         {
-          "object": "["
+          "object": "[",
+          "subject": "operator"
         },
         {
           "object": "b"
         },
         {
-          "object": "+"
+          "object": "+",
+          "subject": "operator"
         },
         {
           "object": "c"
@@ -2734,7 +3010,8 @@
           "object": "]"
         },
         {
-          "object": "+"
+          "object": "+",
+          "subject": "operator"
         },
         {
           "object": "e"
@@ -2745,6 +3022,8 @@
       "precedence",
       "operator_binary_+",
       "operator_["
+    ],
+    "negativeLaws": [
     ],
     "tags": [
       "Python",
@@ -2760,8 +3039,8 @@
       "questionType": "ORDER",
       "questionDomainType": "OrderOperators",
       "questionText": "a + b [ c + d ] + e",
-      "areAnswersRequireContext": true,
       "options": {
+        "requireContext": true
       },
       "answerObjects": [
         {
@@ -2806,19 +3085,22 @@
           "object": "a"
         },
         {
-          "object": "+"
+          "object": "+",
+          "subject": "operator"
         },
         {
           "object": "b"
         },
         {
-          "object": "["
+          "object": "[",
+          "subject": "operator"
         },
         {
           "object": "c"
         },
         {
-          "object": "+"
+          "object": "+",
+          "subject": "operator"
         },
         {
           "object": "d"
@@ -2827,7 +3109,8 @@
           "object": "]"
         },
         {
-          "object": "+"
+          "object": "+",
+          "subject": "operator"
         },
         {
           "object": "e"
@@ -2839,6 +3122,8 @@
       "precedence",
       "operator_binary_+",
       "operator_["
+    ],
+    "negativeLaws": [
     ],
     "tags": [
       "Python",
@@ -2854,8 +3139,8 @@
       "questionType": "ORDER",
       "questionDomainType": "OrderOperators",
       "questionText": "a + b if c + d else e + f if g + h else i + j",
-      "areAnswersRequireContext": true,
       "options": {
+        "requireContext": true
       },
       "answerObjects": [
         {
@@ -2927,19 +3212,22 @@
           "object": "a"
         },
         {
-          "object": "+"
+          "object": "+",
+          "subject": "operator"
         },
         {
           "object": "b"
         },
         {
-          "object": "if"
+          "object": "if",
+          "subject": "operator"
         },
         {
           "object": "c"
         },
         {
-          "object": "+"
+          "object": "+",
+          "subject": "operator"
         },
         {
           "object": "d"
@@ -2951,19 +3239,22 @@
           "object": "e"
         },
         {
-          "object": "+"
+          "object": "+",
+          "subject": "operator"
         },
         {
           "object": "f"
         },
         {
-          "object": "if"
+          "object": "if",
+          "subject": "operator"
         },
         {
           "object": "g"
         },
         {
-          "object": "+"
+          "object": "+",
+          "subject": "operator"
         },
         {
           "object": "h"
@@ -2975,7 +3266,8 @@
           "object": "i"
         },
         {
-          "object": "+"
+          "object": "+",
+          "subject": "operator"
         },
         {
           "object": "j"
@@ -2987,6 +3279,8 @@
       "precedence",
       "operator_binary_+",
       "operator_ternary"
+    ],
+    "negativeLaws": [
     ],
     "tags": [
       "Python",
@@ -3003,8 +3297,8 @@
       "questionType": "MATCHING",
       "questionDomainType": "DefineType",
       "questionText": "class Matrix {\n\tint getDeterminant() const;\n\tMatrix transpose() const;\n\tMatrix multiply(int a) const;\n\tsize_t size() const;\n\n\tstatic Matrix identity(size_t size);\n}\n\nMatrix a;\nMatrix b;\nint c;\nint d;\n\nb * (a - c * a.identity(a.size())).getDeterminant()",
-      "areAnswersRequireContext": true,
       "options": {
+        "requireContext": true
       },
       "answerObjects": [
         {
@@ -3180,6 +3474,8 @@
       "type",
       "SystemIntegrationTest"
     ],
+    "negativeLaws": [
+    ],
     "tags": [
       "C++",
       "type",
@@ -3195,8 +3491,8 @@
       "questionType": "MULTI_CHOICE",
       "questionDomainType": "OrderOperatorsSupplementary",
       "questionText": "Select all binary operators in expression: ! a + - b * c",
-      "areAnswersRequireContext": false,
       "options": {
+        "requireContext": false
       },
       "answerObjects": [
         {
@@ -3293,6 +3589,8 @@
       "SystemIntegrationTest",
       "supplementary"
     ],
+    "negativeLaws": [
+    ],
     "tags": [
       "C++",
       "basics",
@@ -3306,14 +3604,14 @@
     "questionData": {
       "questionType": "SINGLE_CHOICE",
       "questionDomainType": "OrderOperatorsSupplementary",
-      "questionText": "What prevents evaluation of operator ${operator} at pos ${pos} ?",
-      "areAnswersRequireContext": false,
+      "questionText": "expr_domain.supplementary.first_OrderOperatorsSupplementary_TEXT",
       "options": {
+        "requireContext": false
       },
       "answerObjects": [
         {
           "answerId": 0,
-          "hyperText": "precedence of operator ${left_operator} at pos ${left_operator_pos}",
+          "hyperText": "expr_domain.supplementary.first_OrderOperatorsSupplementary_select_reason_left_precedence",
           "domainInfo": "select_reason_left_precedence",
           "isRightCol": false,
           "concept": "",
@@ -3322,7 +3620,7 @@
         },
         {
           "answerId": 1,
-          "hyperText": "associativity of operator ${left_operator} at pos ${left_operator_pos}",
+          "hyperText": "expr_domain.supplementary.first_OrderOperatorsSupplementary_select_reason_left_associativity",
           "domainInfo": "select_reason_left_associativity",
           "isRightCol": false,
           "concept": "",
@@ -3331,7 +3629,7 @@
         },
         {
           "answerId": 2,
-          "hyperText": "unevaluated parenthesis at pos ${left_parenthesis_pos}",
+          "hyperText": "expr_domain.supplementary.first_OrderOperatorsSupplementary_select_reason_left_parenthesis",
           "domainInfo": "select_reason_left_parenthesis",
           "isRightCol": false,
           "concept": "operator_binary_+",
@@ -3340,7 +3638,7 @@
         },
         {
           "answerId": 3,
-          "hyperText": "precedence of operator ${right_operator} at pos ${right_operator_pos}",
+          "hyperText": "expr_domain.supplementary.first_OrderOperatorsSupplementary_select_reason_right_precedence",
           "domainInfo": "select_reason_right_precedence",
           "isRightCol": false,
           "concept": "",
@@ -3349,7 +3647,7 @@
         },
         {
           "answerId": 4,
-          "hyperText": "associativity of operator ${right_operator} at pos ${right_operator_pos}",
+          "hyperText": "expr_domain.supplementary.first_OrderOperatorsSupplementary_select_reason_right_associativity",
           "domainInfo": "select_reason_right_associativity",
           "isRightCol": false,
           "concept": "",
@@ -3358,7 +3656,7 @@
         },
         {
           "answerId": 5,
-          "hyperText": "unevaluated parenthesis at pos ${right_parenthesis_pos}",
+          "hyperText": "expr_domain.supplementary.first_OrderOperatorsSupplementary_select_reason_right_parenthesis",
           "domainInfo": "select_reason_right_parenthesis",
           "isRightCol": false,
           "concept": "",
@@ -3375,6 +3673,8 @@
       "SystemIntegrationTest",
       "supplementary"
     ],
+    "negativeLaws": [
+    ],
     "tags": [
       "C++",
       "basics",
@@ -3388,14 +3688,14 @@
     "questionData": {
       "questionType": "SINGLE_CHOICE",
       "questionDomainType": "OrderOperatorsSupplementary",
-      "questionText": "What operator has higher precedence?",
-      "areAnswersRequireContext": false,
+      "questionText": "expr_domain.supplementary.select_highest_precedence_left_operator_TEXT",
       "options": {
+        "requireContext": false
       },
       "answerObjects": [
         {
           "answerId": 0,
-          "hyperText": "operator ${left_operator}",
+          "hyperText": "expr_domain.supplementary.select_highest_precedence_left_operator_select_highest_precedence_operator_left",
           "domainInfo": "select_highest_precedence_operator_left",
           "isRightCol": false,
           "concept": "",
@@ -3404,7 +3704,7 @@
         },
         {
           "answerId": 1,
-          "hyperText": "operator ${operator}",
+          "hyperText": "expr_domain.supplementary.select_highest_precedence_left_operator_select_highest_precedence_operator_operator",
           "domainInfo": "select_highest_precedence_operator_operator",
           "isRightCol": false,
           "concept": "",
@@ -3413,7 +3713,7 @@
         },
         {
           "answerId": 2,
-          "hyperText": "same precedence",
+          "hyperText": "expr_domain.supplementary.select_highest_precedence_left_operator_select_highest_precedence_operator_same",
           "domainInfo": "select_highest_precedence_operator_same",
           "isRightCol": false,
           "concept": "",
@@ -3430,6 +3730,8 @@
       "SystemIntegrationTest",
       "supplementary"
     ],
+    "negativeLaws": [
+    ],
     "tags": [
       "C++",
       "basics",
@@ -3443,14 +3745,14 @@
     "questionData": {
       "questionType": "SINGLE_CHOICE",
       "questionDomainType": "OrderOperatorsSupplementary",
-      "questionText": "What operator has higher precedence?",
-      "areAnswersRequireContext": false,
+      "questionText": "expr_domain.supplementary.select_highest_precedence_left_operator_TEXT",
       "options": {
+        "requireContext": false
       },
       "answerObjects": [
         {
           "answerId": 0,
-          "hyperText": "operator ${right_operator}",
+          "hyperText": "expr_domain.supplementary.select_highest_precedence_left_operator_select_highest_precedence_operator_right",
           "domainInfo": "select_highest_precedence_operator_right",
           "isRightCol": false,
           "concept": "",
@@ -3459,7 +3761,7 @@
         },
         {
           "answerId": 1,
-          "hyperText": "operator ${operator}",
+          "hyperText": "expr_domain.supplementary.select_highest_precedence_left_operator_select_highest_precedence_operator_operator",
           "domainInfo": "select_highest_precedence_operator_operator",
           "isRightCol": false,
           "concept": "",
@@ -3468,7 +3770,7 @@
         },
         {
           "answerId": 2,
-          "hyperText": "same precedence",
+          "hyperText": "expr_domain.supplementary.select_highest_precedence_left_operator_select_highest_precedence_operator_same",
           "domainInfo": "select_highest_precedence_operator_same",
           "isRightCol": false,
           "concept": "",
@@ -3485,6 +3787,8 @@
       "SystemIntegrationTest",
       "supplementary"
     ],
+    "negativeLaws": [
+    ],
     "tags": [
       "C++",
       "basics",
@@ -3498,14 +3802,14 @@
     "questionData": {
       "questionType": "SINGLE_CHOICE",
       "questionDomainType": "OrderOperatorsSupplementary",
-      "questionText": "What influences evaluation order at first?",
-      "areAnswersRequireContext": false,
+      "questionText": "expr_domain.supplementary.select_precedence_or_associativity_left_influence_TEXT",
       "options": {
+        "requireContext": false
       },
       "answerObjects": [
         {
           "answerId": 0,
-          "hyperText": "precedence",
+          "hyperText": "expr_domain.supplementary.select_precedence_or_associativity_left_influence_select_precedence_or_associativity_influence_precedence",
           "domainInfo": "select_precedence_or_associativity_influence_precedence",
           "isRightCol": false,
           "concept": "",
@@ -3514,7 +3818,7 @@
         },
         {
           "answerId": 1,
-          "hyperText": "associativity",
+          "hyperText": "expr_domain.supplementary.select_precedence_or_associativity_left_influence_select_precedence_or_associativity_influence_associativity",
           "domainInfo": "select_precedence_or_associativity_influence_associativity",
           "isRightCol": false,
           "concept": "",
@@ -3532,6 +3836,8 @@
       "SystemIntegrationTest",
       "supplementary"
     ],
+    "negativeLaws": [
+    ],
     "tags": [
       "C++",
       "basics",
@@ -3545,9 +3851,9 @@
     "questionData": {
       "questionType": "SINGLE_CHOICE",
       "questionDomainType": "OrderOperatorsSupplementary",
-      "questionText": "Wrong, precedence of operator ${left_operator} is higher than operator ${operator}, so operator ${left_operator} should be evaluated first and the operator ${left_operator} at pos ${left_operator_pos} will block the operator ${operator} at pos ${pos} until the operator ${left_operator} at pos ${left_operator_pos} is evaluated",
-      "areAnswersRequireContext": false,
+      "questionText": "expr_domain.supplementary.error_select_highest_precedence_operator_left_TEXT",
       "options": {
+        "requireContext": false
       },
       "answerObjects": [
       ],
@@ -3559,6 +3865,8 @@
       "SystemIntegrationTest",
       "supplementary"
     ],
+    "negativeLaws": [
+    ],
     "tags": [
       "C++",
       "basics",
@@ -3572,9 +3880,9 @@
     "questionData": {
       "questionType": "SINGLE_CHOICE",
       "questionDomainType": "OrderOperatorsSupplementary",
-      "questionText": "Yes, precedence of operator ${left_operator} is higher than operator ${operator}, so operator ${left_operator} should be evaluated first and the operator ${left_operator} at pos ${left_operator_pos} will block the operator ${operator} at pos ${pos} until the operator ${left_operator} at pos ${left_operator_pos} is evaluated",
-      "areAnswersRequireContext": false,
+      "questionText": "expr_domain.supplementary.correct_select_highest_precedence_operator_left_TEXT",
       "options": {
+        "requireContext": false
       },
       "answerObjects": [
       ],
@@ -3586,6 +3894,8 @@
       "SystemIntegrationTest",
       "supplementary"
     ],
+    "negativeLaws": [
+    ],
     "tags": [
       "C++",
       "basics",
@@ -3599,9 +3909,9 @@
     "questionData": {
       "questionType": "SINGLE_CHOICE",
       "questionDomainType": "OrderOperatorsSupplementary",
-      "questionText": "Wrong, precedence of operator ${operator} is higher than operator ${left_operator}, so operator ${operator} should be evaluated first and the operator ${operator} at pos ${pos} will block the operator ${left_operator} at pos ${left_operator_pos} until the operator ${operator} at pos ${pos} is evaluated",
-      "areAnswersRequireContext": false,
+      "questionText": "expr_domain.supplementary.error_select_highest_precedence_left_operator_TEXT",
       "options": {
+        "requireContext": false
       },
       "answerObjects": [
       ],
@@ -3613,6 +3923,8 @@
       "SystemIntegrationTest",
       "supplementary"
     ],
+    "negativeLaws": [
+    ],
     "tags": [
       "C++",
       "basics",
@@ -3626,9 +3938,9 @@
     "questionData": {
       "questionType": "SINGLE_CHOICE",
       "questionDomainType": "OrderOperatorsSupplementary",
-      "questionText": "Yes, precedence of operator ${operator} is higher than operator ${left_operator}, so operator ${operator} should be evaluated first and the operator ${operator} at pos ${pos} will block the operator ${left_operator} at pos ${left_operator_pos} until the operator ${operator} at pos ${pos} is evaluated",
-      "areAnswersRequireContext": false,
+      "questionText": "expr_domain.supplementary.correct_select_highest_precedence_left_operator_TEXT",
       "options": {
+        "requireContext": false
       },
       "answerObjects": [
       ],
@@ -3640,6 +3952,8 @@
       "SystemIntegrationTest",
       "supplementary"
     ],
+    "negativeLaws": [
+    ],
     "tags": [
       "C++",
       "basics",
@@ -3653,9 +3967,9 @@
     "questionData": {
       "questionType": "SINGLE_CHOICE",
       "questionDomainType": "OrderOperatorsSupplementary",
-      "questionText": "Wrong, precedence of operator ${right_operator} is higher than operator ${operator}, so operator ${right_operator} should be evaluated first and the operator ${right_operator} at pos ${right_operator_pos} will block the operator ${operator} at pos ${pos} until the operator ${right_operator} at pos ${right_operator_pos} is evaluated",
-      "areAnswersRequireContext": false,
+      "questionText": "expr_domain.supplementary.error_select_highest_precedence_operator_right_TEXT",
       "options": {
+        "requireContext": false
       },
       "answerObjects": [
       ],
@@ -3667,6 +3981,8 @@
       "SystemIntegrationTest",
       "supplementary"
     ],
+    "negativeLaws": [
+    ],
     "tags": [
       "C++",
       "basics",
@@ -3680,9 +3996,9 @@
     "questionData": {
       "questionType": "SINGLE_CHOICE",
       "questionDomainType": "OrderOperatorsSupplementary",
-      "questionText": "Yes, precedence of operator ${right_operator} is higher than operator ${operator}, so operator ${right_operator} should be evaluated first and the operator ${right_operator} at pos ${right_operator_pos} will block the operator ${operator} at pos ${pos} until the operator ${right_operator} at pos ${right_operator_pos} is evaluated",
-      "areAnswersRequireContext": false,
+      "questionText": "expr_domain.supplementary.correct_select_highest_precedence_operator_right_TEXT",
       "options": {
+        "requireContext": false
       },
       "answerObjects": [
       ],
@@ -3694,6 +4010,8 @@
       "SystemIntegrationTest",
       "supplementary"
     ],
+    "negativeLaws": [
+    ],
     "tags": [
       "C++",
       "basics",
@@ -3707,9 +4025,9 @@
     "questionData": {
       "questionType": "SINGLE_CHOICE",
       "questionDomainType": "OrderOperatorsSupplementary",
-      "questionText": "Wrong, precedence of operator ${operator} is higher than operator ${right_operator}, so operator ${operator} should be evaluated first and the operator ${operator} at pos ${pos} will block the operator ${right_operator} at pos ${right_operator_pos} until the operator ${operator} at pos ${pos} is evaluated",
-      "areAnswersRequireContext": false,
+      "questionText": "expr_domain.supplementary.error_select_highest_precedence_right_operator_TEXT",
       "options": {
+        "requireContext": false
       },
       "answerObjects": [
       ],
@@ -3721,6 +4039,8 @@
       "SystemIntegrationTest",
       "supplementary"
     ],
+    "negativeLaws": [
+    ],
     "tags": [
       "C++",
       "basics",
@@ -3734,9 +4054,9 @@
     "questionData": {
       "questionType": "SINGLE_CHOICE",
       "questionDomainType": "OrderOperatorsSupplementary",
-      "questionText": "Yes, precedence of operator ${operator} is higher than operator ${right_operator}, so operator ${operator} should be evaluated first and the operator ${operator} at pos ${pos} will block the operator ${right_operator} at pos ${right_operator_pos} until the operator ${operator} at pos ${pos} is evaluated",
-      "areAnswersRequireContext": false,
+      "questionText": "expr_domain.supplementary.correct_select_highest_precedence_right_operator_TEXT",
       "options": {
+        "requireContext": false
       },
       "answerObjects": [
       ],
@@ -3748,6 +4068,8 @@
       "SystemIntegrationTest",
       "supplementary"
     ],
+    "negativeLaws": [
+    ],
     "tags": [
       "C++",
       "basics",
@@ -3761,9 +4083,9 @@
     "questionData": {
       "questionType": "SINGLE_CHOICE",
       "questionDomainType": "OrderOperatorsSupplementary",
-      "questionText": "Wrong, precedence is checked before associativity, so operator ${left_operator} at pos ${left_operator_pos} with higher precedence blocks evaluation of operator ${operator} at pos ${pos} until the operator ${left_operator} at pos ${left_operator_pos} is evaluated",
-      "areAnswersRequireContext": false,
+      "questionText": "expr_domain.supplementary.error_select_precedence_or_associativity_left_TEXT",
       "options": {
+        "requireContext": false
       },
       "answerObjects": [
       ],
@@ -3775,32 +4097,7 @@
       "SystemIntegrationTest",
       "supplementary"
     ],
-    "tags": [
-      "C++",
-      "basics",
-      "operators",
-      "order",
-      "evaluation"
-    ]
-  },
-  {
-    "questionType": "SINGLE_CHOICE",
-    "questionData": {
-      "questionType": "SINGLE_CHOICE",
-      "questionDomainType": "OrderOperatorsSupplementary",
-      "questionText": "Yes, precedence is checked before associativity, so operator ${left_operator} at pos ${left_operator_pos} with higher precedence blocks evaluation of operator ${operator} at pos ${pos} until the operator ${left_operator} at pos ${left_operator_pos} is evaluated",
-      "areAnswersRequireContext": false,
-      "options": {
-      },
-      "answerObjects": [
-      ],
-      "statementFacts": [
-      ]
-    },
-    "concepts": [
-      "correct_select_precedence_or_associativity_left",
-      "SystemIntegrationTest",
-      "supplementary"
+    "negativeLaws": [
     ],
     "tags": [
       "C++",
@@ -3815,9 +4112,38 @@
     "questionData": {
       "questionType": "SINGLE_CHOICE",
       "questionDomainType": "OrderOperatorsSupplementary",
-      "questionText": "Wrong, precedence is checked before associativity, so operator ${right_operator} at pos ${right_operator_pos} with higher precedence blocks evaluation of operator ${operator} at pos ${pos} until the operator ${right_operator} at pos ${right_operator_pos} is evaluated",
-      "areAnswersRequireContext": false,
+      "questionText": "expr_domain.supplementary.correct_select_precedence_or_associativity_left_TEXT",
       "options": {
+        "requireContext": false
+      },
+      "answerObjects": [
+      ],
+      "statementFacts": [
+      ]
+    },
+    "concepts": [
+      "correct_select_precedence_or_associativity_left",
+      "SystemIntegrationTest",
+      "supplementary"
+    ],
+    "negativeLaws": [
+    ],
+    "tags": [
+      "C++",
+      "basics",
+      "operators",
+      "order",
+      "evaluation"
+    ]
+  },
+  {
+    "questionType": "SINGLE_CHOICE",
+    "questionData": {
+      "questionType": "SINGLE_CHOICE",
+      "questionDomainType": "OrderOperatorsSupplementary",
+      "questionText": "expr_domain.supplementary.error_select_precedence_or_associativity_right_TEXT",
+      "options": {
+        "requireContext": false
       },
       "answerObjects": [
       ],
@@ -3842,9 +4168,9 @@
     "questionData": {
       "questionType": "SINGLE_CHOICE",
       "questionDomainType": "OrderOperatorsSupplementary",
-      "questionText": "Yes, precedence is checked before associativity, so operator ${right_operator} at pos ${right_operator_pos} with higher precedence blocks evaluation of operator ${operator} at pos ${pos} until the operator ${right_operator} at pos ${right_operator_pos} is evaluated",
-      "areAnswersRequireContext": false,
+      "questionText": "expr_domain.supplementary.correct_select_precedence_or_associativity_right_TEXT",
       "options": {
+        "requireContext": false
       },
       "answerObjects": [
       ],
@@ -3869,14 +4195,14 @@
     "questionData": {
       "questionType": "SINGLE_CHOICE",
       "questionDomainType": "OrderOperatorsSupplementary",
-      "questionText": "What influences evaluation order at operators with same precedence?",
-      "areAnswersRequireContext": false,
+      "questionText": "expr_domain.supplementary.select_associativity_or_arity_influence_left_TEXT",
       "options": {
+        "requireContext": false
       },
       "answerObjects": [
         {
           "answerId": 0,
-          "hyperText": "arity",
+          "hyperText": "expr_domain.supplementary.select_associativity_or_arity_influence_left_select_associativity_or_arity_influence_arity",
           "domainInfo": "select_associativity_or_arity_influence_arity",
           "isRightCol": false,
           "concept": "",
@@ -3885,7 +4211,7 @@
         },
         {
           "answerId": 1,
-          "hyperText": "associativity",
+          "hyperText": "expr_domain.supplementary.select_associativity_or_arity_influence_left_select_associativity_or_arity_influence_associativity",
           "domainInfo": "select_associativity_or_arity_influence_associativity",
           "isRightCol": false,
           "concept": "",
@@ -3916,9 +4242,9 @@
     "questionData": {
       "questionType": "SINGLE_CHOICE",
       "questionDomainType": "OrderOperatorsSupplementary",
-      "questionText": "Wrong, associativity influence evaluation order, so operator ${left_operator} at pos ${left_operator_pos} with the same precedence and left associativity blocks evaluation of operator ${operator} at pos ${pos} until the operator ${left_operator} at pos ${left_operator_pos} is evaluated",
-      "areAnswersRequireContext": false,
+      "questionText": "expr_domain.supplementary.error_select_associativity_or_arity_influence_left_TEXT",
       "options": {
+        "requireContext": false
       },
       "answerObjects": [
       ],
@@ -3943,9 +4269,9 @@
     "questionData": {
       "questionType": "SINGLE_CHOICE",
       "questionDomainType": "OrderOperatorsSupplementary",
-      "questionText": "Wrong, associativity influence evaluation order, so operator ${right_operator} at pos ${right_operator_pos} with the same precedence and right associativity blocks evaluation of operator ${operator} at pos ${pos} until the operator ${right_operator} at pos ${right_operator_pos} is evaluated",
-      "areAnswersRequireContext": false,
+      "questionText": "expr_domain.supplementary.error_select_associativity_or_arity_influence_right_TEXT",
       "options": {
+        "requireContext": false
       },
       "answerObjects": [
       ],
@@ -3970,9 +4296,9 @@
     "questionData": {
       "questionType": "SINGLE_CHOICE",
       "questionDomainType": "OrderOperatorsSupplementary",
-      "questionText": "Yes, associativity influence evaluation order, so operator ${left_operator} at pos ${left_operator_pos} with the same precedence and left associativity blocks evaluation of operator ${operator} at pos ${pos} until the operator ${left_operator} at pos ${left_operator_pos} is evaluated",
-      "areAnswersRequireContext": false,
+      "questionText": "expr_domain.supplementary.correct_select_associativity_or_arity_influence_left_TEXT",
       "options": {
+        "requireContext": false
       },
       "answerObjects": [
       ],
@@ -3997,36 +4323,9 @@
     "questionData": {
       "questionType": "SINGLE_CHOICE",
       "questionDomainType": "OrderOperatorsSupplementary",
-      "questionText": "Wrong, associativity influence evaluation order, so operator ${right_operator} at pos ${right_operator_pos} with the same precedence and right associativity blocks evaluation of operator ${operator} at pos ${pos} until the operator ${right_operator} at pos ${right_operator_pos} is evaluated",
-      "areAnswersRequireContext": false,
+      "questionText": "expr_domain.supplementary.correct_select_associativity_or_arity_influence_right_TEXT",
       "options": {
-      },
-      "answerObjects": [
-      ],
-      "statementFacts": [
-      ]
-    },
-    "concepts": [
-      "wrong_select_associativity_or_arity_influence_right",
-      "SystemIntegrationTest",
-      "supplementary"
-    ],
-    "tags": [
-      "C++",
-      "basics",
-      "operators",
-      "order",
-      "evaluation"
-    ]
-  },
-  {
-    "questionType": "SINGLE_CHOICE",
-    "questionData": {
-      "questionType": "SINGLE_CHOICE",
-      "questionDomainType": "OrderOperatorsSupplementary",
-      "questionText": "Yes, associativity influence evaluation order, so operator ${right_operator} at pos ${right_operator_pos} with the same precedence and right associativity blocks evaluation of operator ${operator} at pos ${pos} until the operator ${right_operator} at pos ${right_operator_pos} is evaluated",
-      "areAnswersRequireContext": false,
-      "options": {
+        "requireContext": false
       },
       "answerObjects": [
       ],
@@ -4051,14 +4350,14 @@
     "questionData": {
       "questionType": "SINGLE_CHOICE",
       "questionDomainType": "OrderOperatorsSupplementary",
-      "questionText": "What is the associativity of operator ${left_operator}?",
-      "areAnswersRequireContext": false,
+      "questionText": "expr_domain.supplementary.select_associativity_type_left_TEXT",
       "options": {
+        "requireContext": false
       },
       "answerObjects": [
         {
           "answerId": 0,
-          "hyperText": "left",
+          "hyperText": "expr_domain.supplementary.select_associativity_type_left_select_associativity_type_left_left",
           "domainInfo": "select_associativity_type_left_left",
           "isRightCol": false,
           "concept": "",
@@ -4067,7 +4366,7 @@
         },
         {
           "answerId": 1,
-          "hyperText": "right",
+          "hyperText": "expr_domain.supplementary.select_associativity_type_left_select_associativity_type_left_right",
           "domainInfo": "select_associativity_type_left_right",
           "isRightCol": false,
           "concept": "",
@@ -4076,7 +4375,7 @@
         },
         {
           "answerId": 2,
-          "hyperText": "nonassoc",
+          "hyperText": "expr_domain.supplementary.select_associativity_type_left_select_associativity_type_left_nonassoc",
           "domainInfo": "select_associativity_type_left_nonassoc",
           "isRightCol": false,
           "concept": "",
@@ -4106,14 +4405,14 @@
     "questionData": {
       "questionType": "SINGLE_CHOICE",
       "questionDomainType": "OrderOperatorsSupplementary",
-      "questionText": "What is the associativity of operator ${right_operator}?",
-      "areAnswersRequireContext": false,
+      "questionText": "expr_domain.supplementary.select_associativity_type_right_TEXT",
       "options": {
+        "requireContext": false
       },
       "answerObjects": [
         {
           "answerId": 0,
-          "hyperText": "left",
+          "hyperText": "expr_domain.supplementary.select_associativity_type_left_select_associativity_type_left_left",
           "domainInfo": "select_associativity_type_right_left",
           "isRightCol": false,
           "concept": "",
@@ -4122,7 +4421,7 @@
         },
         {
           "answerId": 1,
-          "hyperText": "right",
+          "hyperText": "expr_domain.supplementary.select_associativity_type_left_select_associativity_type_left_right",
           "domainInfo": "select_associativity_type_right_right",
           "isRightCol": false,
           "concept": "",
@@ -4131,7 +4430,7 @@
         },
         {
           "answerId": 2,
-          "hyperText": "nonassoc",
+          "hyperText": "expr_domain.supplementary.select_associativity_type_left_select_associativity_type_left_nonassoc",
           "domainInfo": "select_associativity_type_right_nonassoc",
           "isRightCol": false,
           "concept": "",
@@ -4161,9 +4460,9 @@
     "questionData": {
       "questionType": "SINGLE_CHOICE",
       "questionDomainType": "OrderOperatorsSupplementary",
-      "questionText": "Yes, operators ${left_operator} and ${operator} have same precedence and left associativity, so they are evaluated left to right and ${left_operator} at pos ${left_operator_pos} will block the operator ${operator} at pos ${pos} until the operator ${left_operator} at pos ${left_operator_pos} is evaluated",
-      "areAnswersRequireContext": false,
+      "questionText": "expr_domain.supplementary.correct_select_associativity_type_left_left_TEXT",
       "options": {
+        "requireContext": false
       },
       "answerObjects": [
       ],
@@ -4188,9 +4487,9 @@
     "questionData": {
       "questionType": "SINGLE_CHOICE",
       "questionDomainType": "OrderOperatorsSupplementary",
-      "questionText": "Wrong, operators ${left_operator} and ${operator} have same precedence and left associativity, so they are evaluated left to right and ${left_operator} at pos ${left_operator_pos} will block the operator ${operator} at pos ${pos} until the operator ${left_operator} at pos ${left_operator_pos} is evaluated",
-      "areAnswersRequireContext": false,
+      "questionText": "expr_domain.supplementary.error_select_associativity_type_left_right_TEXT",
       "options": {
+        "requireContext": false
       },
       "answerObjects": [
       ],
@@ -4216,9 +4515,9 @@
     "questionData": {
       "questionType": "SINGLE_CHOICE",
       "questionDomainType": "OrderOperatorsSupplementary",
-      "questionText": "Wrong, operators ${left_operator} and ${operator} have same precedence and right associativity, so they are evaluated right to left and ${operator} at pos ${operator_pos} will block the operator ${left_operator} at pos ${left_operator_pos} until the operator ${operator} at pos ${pos} is evaluated",
-      "areAnswersRequireContext": false,
+      "questionText": "expr_domain.supplementary.error_select_associativity_type_left_right_assoc_TEXT",
       "options": {
+        "requireContext": false
       },
       "answerObjects": [
       ],
@@ -4243,9 +4542,9 @@
     "questionData": {
       "questionType": "SINGLE_CHOICE",
       "questionDomainType": "OrderOperatorsSupplementary",
-      "questionText": "Yes, operators ${left_operator} and ${operator} have same precedence and right associativity, so they are evaluated right to left and ${operator} at pos ${operator_pos} will block the operator ${left_operator} at pos ${left_operator_pos} until the operator ${operator} at pos ${pos} is evaluated",
-      "areAnswersRequireContext": false,
+      "questionText": "expr_domain.supplementary.correct_select_associativity_type_left_right_assoc_TEXT",
       "options": {
+        "requireContext": false
       },
       "answerObjects": [
       ],
@@ -4270,9 +4569,9 @@
     "questionData": {
       "questionType": "SINGLE_CHOICE",
       "questionDomainType": "OrderOperatorsSupplementary",
-      "questionText": "Yes, operators ${right_operator} and ${operator} have same precedence and left associativity, so they are evaluated left to right and ${operator} at pos ${operator_pos} will block the operator ${right_operator} at pos ${right_operator_pos} until the operator ${operator} at pos ${pos} is evaluated",
-      "areAnswersRequireContext": false,
+      "questionText": "expr_domain.supplementary.correct_select_associativity_type_right_left_assoc_TEXT",
       "options": {
+        "requireContext": false
       },
       "answerObjects": [
       ],
@@ -4297,9 +4596,9 @@
     "questionData": {
       "questionType": "SINGLE_CHOICE",
       "questionDomainType": "OrderOperatorsSupplementary",
-      "questionText": "Wrong, operators ${right_operator} and ${operator} have same precedence and left associativity, so they are evaluated left to right and ${operator} at pos ${operator_pos} will block the operator ${right_operator} at pos ${right_operator_pos} until the operator ${operator} at pos ${pos} is evaluated",
-      "areAnswersRequireContext": false,
+      "questionText": "expr_domain.supplementary.error_select_associativity_type_right_left_assoc_TEXT",
       "options": {
+        "requireContext": false
       },
       "answerObjects": [
       ],
@@ -4324,9 +4623,9 @@
     "questionData": {
       "questionType": "SINGLE_CHOICE",
       "questionDomainType": "OrderOperatorsSupplementary",
-      "questionText": "Yes, operators ${right_operator} and ${operator} have same precedence and right associativity, so they are evaluated right to left and ${right_operator} at pos ${right_operator_pos} will block the operator ${operator} at pos ${pos} until the operator ${right_operator} at pos ${right_operator_pos} is evaluated",
-      "areAnswersRequireContext": false,
+      "questionText": "expr_domain.supplementary.correct_select_associativity_type_right_right_TEXT",
       "options": {
+        "requireContext": false
       },
       "answerObjects": [
       ],
@@ -4351,9 +4650,9 @@
     "questionData": {
       "questionType": "SINGLE_CHOICE",
       "questionDomainType": "OrderOperatorsSupplementary",
-      "questionText": "Wrong, operators ${right_operator} and ${operator} have same precedence and right associativity, so they are evaluated right to left and ${right_operator} at pos ${right_operator_pos} will block the operator ${operator} at pos ${pos} until the operator ${right_operator} at pos ${right_operator_pos} is evaluated",
-      "areAnswersRequireContext": false,
+      "questionText": "expr_domain.supplementary.error_select_associativity_type_right_left_TEXTerror_select_associativity_type_right_left_TEXT",
       "options": {
+        "requireContext": false
       },
       "answerObjects": [
       ],
@@ -4379,9 +4678,9 @@
     "questionData": {
       "questionType": "SINGLE_CHOICE",
       "questionDomainType": "OrderOperatorsSupplementary",
-      "questionText": "Wrong, precedence is checked before associativity, but in this case the precedence is the same, so it's irrelevant and you should have checked associativity",
-      "areAnswersRequireContext": false,
+      "questionText": "expr_domain.supplementary.error_select_precedence_or_associativity_same_precedence_left_TEXT",
       "options": {
+        "requireContext": false
       },
       "answerObjects": [
       ],
@@ -4408,8 +4707,8 @@
       "questionType": "MATCHING",
       "questionDomainType": "OperandsType",
       "questionText": "Given expression: ! a + - b * c == d / e\n For each operation except + at pos 3 classify operands relations to + at pos 3",
-      "areAnswersRequireContext": true,
       "options": {
+        "requireContext": true
       },
       "answerObjects": [
         {
@@ -4562,8 +4861,8 @@
       "questionType": "MATCHING",
       "questionDomainType": "OperandsType",
       "questionText": "Given expression: b + d ? e + f : g + h \n For each operation except ? at pos 8 classify operands relations to ? at pos 8",
-      "areAnswersRequireContext": true,
       "options": {
+        "requireContext": true
       },
       "answerObjects": [
         {
@@ -4698,8 +4997,8 @@
       "questionType": "MATCHING",
       "questionDomainType": "PrecedenceType",
       "questionText": "Given expression: ! a + - b * c == d - e\n For each operation except + at pos 3 classify precedence relative to + at pos 3",
-      "areAnswersRequireContext": true,
       "options": {
+        "requireContext": true
       },
       "answerObjects": [
         {
@@ -4823,6 +5122,1980 @@
       "basics",
       "operators",
       "precedence_type"
+    ]
+  },
+
+  {
+    "questionType": "ORDERING",
+    "questionData": {
+      "questionType": "ORDER",
+      "questionDomainType": "OrderOperators",
+      "questionText": "a + b + c",
+      "options": {
+        "requireContext": true
+      },
+      "answerObjects": [
+        {
+          "answerId": 0,
+          "hyperText": "+ between a and b",
+          "domainInfo": "op__0__2",
+          "isRightCol": false,
+          "concept": "operator_binary_+",
+          "responsesLeft": [],
+          "responsesRight": []
+        },
+        {
+          "answerId": 1,
+          "hyperText": "+ between b and c",
+          "domainInfo": "op__0__4",
+          "isRightCol": false,
+          "concept": "operator_binary_+",
+          "responsesLeft": [],
+          "responsesRight": []
+        }
+      ],
+      "statementFacts": [
+        {
+          "object": "a"
+        },
+        {
+          "object": "+",
+          "subject": "operator"
+        },
+        {
+          "object": "b"
+        },
+        {
+          "object": "+",
+          "subject": "operator"
+        },
+        {
+          "object": "c"
+        }
+      ]
+    },
+    "concepts": [
+      "associativity",
+      "operator_binary_+",
+      "SystemIntegrationTest"
+    ],
+    "negativeLaws": [
+      "error_base_same_precedence_left_associativity_left"
+    ],
+    "tags": [
+      "C#",
+      "basics",
+      "operators",
+      "order",
+      "evaluation"
+    ]
+  },
+  {
+    "questionType": "ORDERING",
+    "questionData": {
+      "questionType": "ORDER",
+      "questionDomainType": "OrderOperators",
+      "questionText": "a == b < c",
+      "options": {
+        "requireContext": true
+      },
+      "answerObjects": [
+        {
+          "answerId": 0,
+          "hyperText": "== between a and b",
+          "domainInfo": "op__0__2",
+          "isRightCol": false,
+          "concept": "operator_binary_==",
+          "responsesLeft": [],
+          "responsesRight": []
+        },
+        {
+          "answerId": 1,
+          "hyperText": "< between b and c",
+          "domainInfo": "op__0__4",
+          "isRightCol": false,
+          "concept": "operator_binary_<",
+          "responsesLeft": [],
+          "responsesRight": []
+        }
+      ],
+      "statementFacts": [
+        {
+          "object": "a"
+        },
+        {
+          "object": "==",
+          "subject": "operator"
+        },
+        {
+          "object": "b"
+        },
+        {
+          "object": "<",
+          "subject": "operator"
+        },
+        {
+          "object": "c"
+        }
+      ]
+    },
+    "concepts": [
+      "precedence",
+      "operator_binary_==",
+      "operator_binary_<",
+      "SystemIntegrationTest"
+    ],
+    "negativeLaws": [
+      "error_base_higher_precedence_right"
+    ],
+    "tags": [
+      "C#",
+      "basics",
+      "operators",
+      "order",
+      "evaluation"
+    ]
+  },
+  {
+    "questionType": "ORDERING",
+    "questionData": {
+      "questionType": "ORDER",
+      "questionDomainType": "OrderOperators",
+      "questionText": "a + b + c * d",
+      "options": {
+        "requireContext": true
+      },
+      "answerObjects": [
+        {
+          "answerId": 0,
+          "hyperText": "+ between a and b",
+          "domainInfo": "op__0__2",
+          "isRightCol": false,
+          "concept": "operator_binary_+",
+          "responsesLeft": [],
+          "responsesRight": []
+        },
+        {
+          "answerId": 1,
+          "hyperText": "+ between b and c",
+          "domainInfo": "op__0__4",
+          "isRightCol": false,
+          "concept": "operator_binary_+",
+          "responsesLeft": [],
+          "responsesRight": []
+        },
+        {
+          "answerId": 2,
+          "hyperText": "* between c and d",
+          "domainInfo": "op__0__6",
+          "isRightCol": false,
+          "concept": "operator_binary_*",
+          "responsesLeft": [],
+          "responsesRight": []
+        }
+      ],
+      "statementFacts": [
+        {
+          "object": "a"
+        },
+        {
+          "object": "+",
+          "subject": "operator"
+        },
+        {
+          "object": "b"
+        },
+        {
+          "object": "+",
+          "subject": "operator"
+        },
+        {
+          "object": "c"
+        },
+        {
+          "object": "*",
+          "subject": "operator"
+        },
+        {
+          "object": "d"
+        }
+      ]
+    },
+    "concepts": [
+      "associativity",
+      "precedence",
+      "operator_binary_+",
+      "operator_binary_*",
+      "SystemIntegrationTest"
+    ],
+    "negativeLaws": [
+      "error_base_higher_precedence_right",
+      "error_base_same_precedence_left_associativity_left"
+    ],
+    "tags": [
+      "C#",
+      "basics",
+      "operators",
+      "order",
+      "evaluation"
+    ]
+  },
+  {
+    "questionType": "ORDERING",
+    "questionData": {
+      "questionType": "ORDER",
+      "questionDomainType": "OrderOperators",
+      "questionText": "a + b * c || d + e * f",
+      "options": {
+        "requireContext": true
+      },
+      "answerObjects": [
+        {
+          "answerId": 0,
+          "hyperText": "+ between a and b",
+          "domainInfo": "op__0__2",
+          "isRightCol": false,
+          "concept": "operator_binary_+",
+          "responsesLeft": [],
+          "responsesRight": []
+        },
+        {
+          "answerId": 1,
+          "hyperText": "* between b and c",
+          "domainInfo": "op__0__4",
+          "isRightCol": false,
+          "concept": "operator_binary_*",
+          "responsesLeft": [],
+          "responsesRight": []
+        },
+        {
+          "answerId": 2,
+          "hyperText": "|| between c and d",
+          "domainInfo": "op__0__6",
+          "isRightCol": false,
+          "concept": "operator_binary_||",
+          "responsesLeft": [],
+          "responsesRight": []
+        },
+        {
+          "answerId": 3,
+          "hyperText": "+ between d and e",
+          "domainInfo": "op__0__8",
+          "isRightCol": false,
+          "concept": "operator_binary_+",
+          "responsesLeft": [],
+          "responsesRight": []
+        },
+        {
+          "answerId": 4,
+          "hyperText": "* between e and f",
+          "domainInfo": "op__0__10",
+          "isRightCol": false,
+          "concept": "operator_binary_*",
+          "responsesLeft": [],
+          "responsesRight": []
+        }
+      ],
+      "statementFacts": [
+        {
+          "object": "a"
+        },
+        {
+          "object": "+",
+          "subject": "operator"
+        },
+        {
+          "object": "b"
+        },
+        {
+          "object": "*",
+          "subject": "operator"
+        },
+        {
+          "object": "c"
+        },
+        {
+          "object": "||",
+          "subject": "operator"
+        },
+        {
+          "object": "d"
+        },
+        {
+          "object": "+",
+          "subject": "operator"
+        },
+        {
+          "object": "e"
+        },
+        {
+          "object": "*",
+          "subject": "operator"
+        },
+        {
+          "object": "f"
+        }
+      ]
+    },
+    "concepts": [
+      "associativity",
+      "precedence",
+      "operator_evaluating_left_operand_first",
+      "operator_binary_+",
+      "operator_binary_*",
+      "operator_binary_||",
+      "SystemIntegrationTest"
+    ],
+    "negativeLaws": [
+      "error_base_student_error_strict_operands_order_base",
+      "error_base_higher_precedence_right"
+    ],
+    "tags": [
+      "C#",
+      "basics",
+      "operators",
+      "order",
+      "evaluation"
+    ]
+  },
+  {
+    "questionType": "ORDERING",
+    "questionData": {
+      "questionType": "ORDER",
+      "questionDomainType": "OrderOperators",
+      "questionText": "a * b + c * d",
+      "options": {
+        "requireContext": true
+      },
+      "answerObjects": [
+        {
+          "answerId": 0,
+          "hyperText": "* between a and b",
+          "domainInfo": "op__0__2",
+          "isRightCol": false,
+          "concept": "operator_binary_*",
+          "responsesLeft": [],
+          "responsesRight": []
+        },
+        {
+          "answerId": 1,
+          "hyperText": "+ between b and c",
+          "domainInfo": "op__0__4",
+          "isRightCol": false,
+          "concept": "operator_binary_+",
+          "responsesLeft": [],
+          "responsesRight": []
+        },
+        {
+          "answerId": 2,
+          "hyperText": "* between c and d",
+          "domainInfo": "op__0__6",
+          "isRightCol": false,
+          "concept": "operator_binary_*",
+          "responsesLeft": [],
+          "responsesRight": []
+        }
+      ],
+      "statementFacts": [
+        {
+          "object": "a"
+        },
+        {
+          "object": "*",
+          "subject": "operator"
+        },
+        {
+          "object": "b"
+        },
+        {
+          "object": "+",
+          "subject": "operator"
+        },
+        {
+          "object": "c"
+        },
+        {
+          "object": "*",
+          "subject": "operator"
+        },
+        {
+          "object": "d"
+        }
+      ]
+    },
+    "concepts": [
+      "precedence",
+      "operator_binary_+",
+      "operator_binary_*"
+    ],
+    "negativeLaws": [
+      "error_base_higher_precedence_left",
+      "error_base_higher_precedence_right"
+    ],
+    "tags": [
+      "C#",
+      "basics",
+      "operators",
+      "order",
+      "evaluation"
+    ]
+  },
+  {
+    "questionType": "ORDERING",
+    "questionData": {
+      "questionType": "ORDER",
+      "questionDomainType": "OrderOperators",
+      "questionText": "a + b ? c + d : e + f",
+      "options": {
+        "requireContext": true
+      },
+      "answerObjects": [
+        {
+          "answerId": 0,
+          "hyperText": "+ between a and b",
+          "domainInfo": "op__0__2",
+          "isRightCol": false,
+          "concept": "operator_binary_+",
+          "responsesLeft": [],
+          "responsesRight": []
+        },
+        {
+          "answerId": 1,
+          "hyperText": "? between b and c",
+          "domainInfo": "op__0__4",
+          "isRightCol": false,
+          "concept": "operator_ternary",
+          "responsesLeft": [],
+          "responsesRight": []
+        },
+        {
+          "answerId": 2,
+          "hyperText": "+ between c and d",
+          "domainInfo": "op__0__6",
+          "isRightCol": false,
+          "concept": "operator_binary_+",
+          "responsesLeft": [],
+          "responsesRight": []
+        },
+        {
+          "answerId": 3,
+          "hyperText": "+ between e and f",
+          "domainInfo": "op__0__10",
+          "isRightCol": false,
+          "concept": "operator_binary_+",
+          "responsesLeft": [],
+          "responsesRight": []
+        }
+      ],
+      "statementFacts": [
+        {
+          "object": "a"
+        },
+        {
+          "object": "+",
+          "subject": "operator"
+        },
+        {
+          "object": "b"
+        },
+        {
+          "object": "?",
+          "subject": "operator"
+        },
+        {
+          "object": "c"
+        },
+        {
+          "object": "+",
+          "subject": "operator"
+        },
+        {
+          "object": "d"
+        },
+        {
+          "object": ":"
+        },
+        {
+          "object": "e"
+        },
+        {
+          "object": "+",
+          "subject": "operator"
+        },
+        {
+          "object": "f"
+        }
+      ]
+    },
+    "concepts": [
+      "precedence",
+      "operator_binary_+",
+      "operator_ternary",
+      "operator_evaluating_left_operand_first"
+    ],
+    "negativeLaws": [
+      "error_base_student_error_strict_operands_order_base"
+    ],
+    "tags": [
+      "C#",
+      "basics",
+      "operators",
+      "order",
+      "evaluation"
+    ]
+  },
+  {
+    "questionType": "ORDERING",
+    "questionData": {
+      "questionType": "ORDER",
+      "questionDomainType": "OrderOperators",
+      "questionText": "-- a + b",
+      "options": {
+        "requireContext": true
+      },
+      "answerObjects": [
+        {
+          "answerId": 0,
+          "hyperText": "-- before a",
+          "domainInfo": "op__0__1",
+          "isRightCol": false,
+          "concept": "operator_prefix_--",
+          "responsesLeft": [],
+          "responsesRight": []
+        },
+        {
+          "answerId": 1,
+          "hyperText": "+ between a and b",
+          "domainInfo": "op__0__3",
+          "isRightCol": false,
+          "concept": "operator_binary_+",
+          "responsesLeft": [],
+          "responsesRight": []
+        }
+      ],
+      "statementFacts": [
+        {
+          "object": "--",
+          "subject": "operator"
+        },
+        {
+          "object": "a"
+        },
+        {
+          "object": "+",
+          "subject": "operator"
+        },
+        {
+          "object": "b"
+        }
+      ]
+    },
+    "concepts": [
+      "precedence",
+      "operator_binary_+",
+      "operator_prefix_--"
+    ],
+    "negativeLaws": [
+      "error_base_higher_precedence_left"
+    ],
+    "tags": [
+      "C#",
+      "basics",
+      "operators",
+      "order",
+      "evaluation"
+    ]
+  },
+  {
+    "questionType": "ORDERING",
+    "questionData": {
+      "questionType": "ORDER",
+      "questionDomainType": "OrderOperators",
+      "questionText": "a = b = c",
+      "options": {
+        "requireContext": true
+      },
+      "answerObjects": [
+        {
+          "answerId": 0,
+          "hyperText": "= between a and b",
+          "domainInfo": "op__0__2",
+          "isRightCol": false,
+          "concept": "operator=",
+          "responsesLeft": [],
+          "responsesRight": []
+        },
+        {
+          "answerId": 1,
+          "hyperText": "= between b and c",
+          "domainInfo": "op__0__4",
+          "isRightCol": false,
+          "concept": "operator=",
+          "responsesLeft": [],
+          "responsesRight": []
+        }
+      ],
+      "statementFacts": [
+        {
+          "object": "a"
+        },
+        {
+          "object": "=",
+          "subject": "operator"
+        },
+        {
+          "object": "b"
+        },
+        {
+          "object": "=",
+          "subject": "operator"
+        },
+        {
+          "object": "c"
+        }
+      ]
+    },
+    "concepts": [
+      "associativity",
+      "operator="
+    ],
+    "negativeLaws": [
+      "error_base_same_precedence_right_associativity_right"
+    ],
+    "tags": [
+      "C#",
+      "basics",
+      "operators",
+      "order",
+      "evaluation"
+    ]
+  },
+  {
+    "questionType": "ORDERING",
+    "questionData": {
+      "questionType": "ORDER",
+      "questionDomainType": "OrderOperators",
+      "questionText": "-- ( -- a )",
+      "options": {
+        "requireContext": true
+      },
+      "answerObjects": [
+        {
+          "answerId": 0,
+          "hyperText": "-- at start",
+          "domainInfo": "op__0__1",
+          "isRightCol": false,
+          "concept": "operator_prefix_--",
+          "responsesLeft": [],
+          "responsesRight": []
+        },
+        {
+          "answerId": 1,
+          "hyperText": "-- before a",
+          "domainInfo": "op__0__3",
+          "isRightCol": false,
+          "concept": "operator_prefix_--",
+          "responsesLeft": [],
+          "responsesRight": []
+        }
+      ],
+      "statementFacts": [
+        {
+          "object": "--",
+          "subject": "operator"
+        },
+        {
+          "object": "("
+        },
+        {
+          "object": "--",
+          "subject": "operator"
+        },
+        {
+          "object": "a"
+        },
+        {
+          "object": ")"
+        }
+      ]
+    },
+    "concepts": [
+      "associativity",
+      "operator_prefix_--",
+      "two_token_unary"
+    ],
+    "negativeLaws": [
+      "error_base_student_error_in_complex"
+    ],
+    "tags": [
+      "C#",
+      "basics",
+      "operators",
+      "order",
+      "evaluation"
+    ]
+  },
+  {
+    "questionType": "ORDERING",
+    "questionData": {
+      "questionType": "ORDER",
+      "questionDomainType": "OrderOperators",
+      "questionText": "- -- a",
+      "options": {
+        "requireContext": true
+      },
+      "answerObjects": [
+        {
+          "answerId": 0,
+          "hyperText": "- at start",
+          "domainInfo": "op__0__1",
+          "isRightCol": false,
+          "concept": "operator_binary_-",
+          "responsesLeft": [],
+          "responsesRight": []
+        },
+        {
+          "answerId": 1,
+          "hyperText": "-- before a",
+          "domainInfo": "op__0__2",
+          "isRightCol": false,
+          "concept": "operator_prefix_--",
+          "responsesLeft": [],
+          "responsesRight": []
+        }
+      ],
+      "statementFacts": [
+        {
+          "object": "-",
+          "subject": "operator"
+        },
+        {
+          "object": "--",
+          "subject": "operator"
+        },
+        {
+          "object": "a"
+        }
+      ]
+    },
+    "concepts": [
+      "precedence",
+      "operator_prefix_--",
+      "operator_binary_-"
+    ],
+    "negativeLaws": [
+      "error_base_higher_precedence_right"
+    ],
+    "tags": [
+      "C#",
+      "basics",
+      "operators",
+      "order",
+      "evaluation"
+    ]
+  },
+  {
+    "questionType": "ORDERING",
+    "questionData": {
+      "questionType": "ORDER",
+      "questionDomainType": "OrderOperators",
+      "questionText": "a && b || c",
+      "options": {
+        "requireContext": true
+      },
+      "answerObjects": [
+        {
+          "answerId": 0,
+          "hyperText": "&& between a and b",
+          "domainInfo": "op__0__2",
+          "isRightCol": false,
+          "concept": "operator_binary_&&",
+          "responsesLeft": [],
+          "responsesRight": []
+        },
+        {
+          "answerId": 1,
+          "hyperText": "|| between b and c",
+          "domainInfo": "op__0__4",
+          "isRightCol": false,
+          "concept": "operator_binary_||",
+          "responsesLeft": [],
+          "responsesRight": []
+        }
+      ],
+      "statementFacts": [
+        {
+          "object": "a"
+        },
+        {
+          "object": "&&",
+          "subject": "operator"
+        },
+        {
+          "object": "b"
+        },
+        {
+          "object": "||",
+          "subject": "operator"
+        },
+        {
+          "object": "c"
+        }
+      ]
+    },
+    "concepts": [
+      "precedence",
+      "operator_binary_&&",
+      "operator_binary_||"
+    ],
+    "negativeLaws": [
+      "error_base_higher_precedence_left"
+    ],
+    "tags": [
+      "C#",
+      "basics",
+      "operators",
+      "order",
+      "evaluation"
+    ]
+  },
+  {
+    "questionType": "ORDERING",
+    "questionData": {
+      "questionType": "ORDER",
+      "questionDomainType": "OrderOperators",
+      "questionText": "a && ( b || c )",
+      "options": {
+        "requireContext": true
+      },
+      "answerObjects": [
+        {
+          "answerId": 0,
+          "hyperText": "&& between a and (",
+          "domainInfo": "op__0__2",
+          "isRightCol": false,
+          "concept": "operator_binary_&&",
+          "responsesLeft": [],
+          "responsesRight": []
+        },
+        {
+          "answerId": 1,
+          "hyperText": "|| between b and c",
+          "domainInfo": "op__0__5",
+          "isRightCol": false,
+          "concept": "operator_binary_||",
+          "responsesLeft": [],
+          "responsesRight": []
+        }
+      ],
+      "statementFacts": [
+        {
+          "object": "a"
+        },
+        {
+          "object": "&&",
+          "subject": "operator"
+        },
+        {
+          "object": "("
+        },
+        {
+          "object": "b"
+        },
+        {
+          "object": "||",
+          "subject": "operator"
+        },
+        {
+          "object": "c"
+        },
+        {
+          "object": ")"
+        }
+      ]
+    },
+    "concepts": [
+      "precedence",
+      "two_token_unary",
+      "operator_binary_&&",
+      "operator_binary_||"
+    ],
+    "negativeLaws": [
+      "error_base_student_error_in_complex"
+    ],
+    "tags": [
+      "C#",
+      "basics",
+      "operators",
+      "order",
+      "evaluation"
+    ]
+  },
+  {
+    "questionType": "ORDERING",
+    "questionData": {
+      "questionType": "ORDER",
+      "questionDomainType": "OrderOperators",
+      "questionText": "a && ( b || c ) && d",
+      "options": {
+        "requireContext": true
+      },
+      "answerObjects": [
+        {
+          "answerId": 0,
+          "hyperText": "&& between a and (",
+          "domainInfo": "op__0__2",
+          "isRightCol": false,
+          "concept": "operator_binary_&&",
+          "responsesLeft": [],
+          "responsesRight": []
+        },
+        {
+          "answerId": 1,
+          "hyperText": "|| between b and c",
+          "domainInfo": "op__0__5",
+          "isRightCol": false,
+          "concept": "operator_binary_||",
+          "responsesLeft": [],
+          "responsesRight": []
+        },
+        {
+          "answerId": 2,
+          "hyperText": "&& between ) and d",
+          "domainInfo": "op__0__8",
+          "isRightCol": false,
+          "concept": "operator_binary_&&",
+          "responsesLeft": [],
+          "responsesRight": []
+        }
+      ],
+      "statementFacts": [
+        {
+          "object": "a"
+        },
+        {
+          "object": "&&",
+          "subject": "operator"
+        },
+        {
+          "object": "("
+        },
+        {
+          "object": "b"
+        },
+        {
+          "object": "||",
+          "subject": "operator"
+        },
+        {
+          "object": "c"
+        },
+        {
+          "object": ")"
+        },
+        {
+          "object": "&&",
+          "subject": "operator"
+        },
+        {
+          "object": "d"
+        }
+      ]
+    },
+    "concepts": [
+      "associativity",
+      "precedence",
+      "two_token_unary",
+      "operator_binary_&&",
+      "operator_binary_||"
+    ],
+    "negativeLaws": [
+      "error_base_student_error_in_complex",
+      "error_base_same_precedence_left_associativity_left"
+    ],
+    "tags": [
+      "C#",
+      "basics",
+      "operators",
+      "order",
+      "evaluation"
+    ]
+  },
+  {
+    "questionType": "ORDERING",
+    "questionData": {
+      "questionType": "ORDER",
+      "questionDomainType": "OrderOperators",
+      "questionText": "a || ( b || c ?? d || e )",
+      "options": {
+        "requireContext": true
+      },
+      "answerObjects": [
+        {
+          "answerId": 0,
+          "hyperText": "|| between a and (",
+          "domainInfo": "op__0__2",
+          "isRightCol": false,
+          "concept": "operator_binary_||",
+          "responsesLeft": [],
+          "responsesRight": []
+        },
+        {
+          "answerId": 1,
+          "hyperText": "|| between b and c",
+          "domainInfo": "op__0__5",
+          "isRightCol": false,
+          "concept": "operator_binary_||",
+          "responsesLeft": [],
+          "responsesRight": []
+        },
+        {
+          "answerId": 2,
+          "hyperText": "?? between c and d",
+          "domainInfo": "op__0__7",
+          "isRightCol": false,
+          "concept": "operator??",
+          "responsesLeft": [],
+          "responsesRight": []
+        },
+        {
+          "answerId": 3,
+          "hyperText": "|| between d and e",
+          "domainInfo": "op__0__9",
+          "isRightCol": false,
+          "concept": "operator_binary_||",
+          "responsesLeft": [],
+          "responsesRight": []
+        }
+      ],
+      "statementFacts": [
+        {
+          "object": "a"
+        },
+        {
+          "object": "||",
+          "subject": "operator"
+        },
+        {
+          "object": "("
+        },
+        {
+          "object": "b"
+        },
+        {
+          "object": "||",
+          "subject": "operator"
+        },
+        {
+          "object": "c"
+        },
+        {
+          "object": "??",
+          "subject": "operator"
+        },
+        {
+          "object": "d"
+        },
+        {
+          "object": "||",
+          "subject": "operator"
+        },
+        {
+          "object": "e"
+        },
+        {
+          "object": ")"
+        }
+      ]
+    },
+    "concepts": [
+      "precedence",
+      "two_token_unary",
+      "operator_binary_||",
+      "operator_binary_,",
+      "operator_evaluating_left_operand_first"
+    ],
+    "negativeLaws": [
+      "error_base_student_error_in_complex",
+      "error_base_student_error_strict_operands_order_base"
+    ],
+    "tags": [
+      "C#",
+      "basics",
+      "operators",
+      "order",
+      "evaluation"
+    ]
+  },
+  {
+    "questionType": "ORDERING",
+    "questionData": {
+      "questionType": "ORDER",
+      "questionDomainType": "OrderOperators",
+      "questionText": "a + ( b + c < d + e )",
+      "options": {
+        "requireContext": true
+      },
+      "answerObjects": [
+        {
+          "answerId": 0,
+          "hyperText": "+ between a and (",
+          "domainInfo": "op__0__2",
+          "isRightCol": false,
+          "concept": "operator_binary_+",
+          "responsesLeft": [],
+          "responsesRight": []
+        },
+        {
+          "answerId": 1,
+          "hyperText": "+ between b and c",
+          "domainInfo": "op__0__5",
+          "isRightCol": false,
+          "concept": "operator_binary_+",
+          "responsesLeft": [],
+          "responsesRight": []
+        },
+        {
+          "answerId": 2,
+          "hyperText": "< between c and d",
+          "domainInfo": "op__0__7",
+          "isRightCol": false,
+          "concept": "operator_binary_<",
+          "responsesLeft": [],
+          "responsesRight": []
+        },
+        {
+          "answerId": 3,
+          "hyperText": "+ between d and e",
+          "domainInfo": "op__0__9",
+          "isRightCol": false,
+          "concept": "operator_binary_+",
+          "responsesLeft": [],
+          "responsesRight": []
+        }
+      ],
+      "statementFacts": [
+        {
+          "object": "a"
+        },
+        {
+          "object": "+",
+          "subject": "operator"
+        },
+        {
+          "object": "("
+        },
+        {
+          "object": "b"
+        },
+        {
+          "object": "+",
+          "subject": "operator"
+        },
+        {
+          "object": "c"
+        },
+        {
+          "object": "<",
+          "subject": "operator"
+        },
+        {
+          "object": "d"
+        },
+        {
+          "object": "+",
+          "subject": "operator"
+        },
+        {
+          "object": "e"
+        },
+        {
+          "object": ")"
+        }
+      ]
+    },
+    "concepts": [
+      "precedence",
+      "two_token_unary",
+      "operator_binary_+",
+      "operator_binary_<"
+    ],
+    "negativeLaws": [
+      "error_base_student_error_in_complex",
+      "error_base_higher_precedence_left",
+      "error_base_higher_precedence_right"
+    ],
+    "tags": [
+      "C#",
+      "basics",
+      "operators",
+      "order",
+      "evaluation"
+    ]
+  },
+  {
+    "questionType": "ORDERING",
+    "questionData": {
+      "questionType": "ORDER",
+      "questionDomainType": "OrderOperators",
+      "questionText": "a || f ( b || c , d || e )",
+      "options": {
+        "requireContext": true
+      },
+      "answerObjects": [
+        {
+          "answerId": 0,
+          "hyperText": "|| between a and f",
+          "domainInfo": "op__0__2",
+          "isRightCol": false,
+          "concept": "operator_binary_||",
+          "responsesLeft": [],
+          "responsesRight": []
+        },
+        {
+          "answerId": 1,
+          "hyperText": "( between f and b",
+          "domainInfo": "op__0__4",
+          "isRightCol": false,
+          "concept": "function_call",
+          "responsesLeft": [],
+          "responsesRight": []
+        },
+        {
+          "answerId": 2,
+          "hyperText": "|| between b and c",
+          "domainInfo": "op__0__6",
+          "isRightCol": false,
+          "concept": "operator_binary_||",
+          "responsesLeft": [],
+          "responsesRight": []
+        },
+        {
+          "answerId": 3,
+          "hyperText": "|| between d and e",
+          "domainInfo": "op__0__10",
+          "isRightCol": false,
+          "concept": "operator_binary_||",
+          "responsesLeft": [],
+          "responsesRight": []
+        }
+      ],
+      "statementFacts": [
+        {
+          "object": "a"
+        },
+        {
+          "object": "||",
+          "subject": "operator"
+        },
+        {
+          "object": "f"
+        },
+        {
+          "object": "(",
+          "subject": "operator"
+        },
+        {
+          "object": "b"
+        },
+        {
+          "object": "||",
+          "subject": "operator"
+        },
+        {
+          "object": "c"
+        },
+        {
+          "object": ","
+        },
+        {
+          "object": "d"
+        },
+        {
+          "object": "||",
+          "subject": "operator"
+        },
+        {
+          "object": "e"
+        },
+        {
+          "object": ")"
+        }
+      ]
+    },
+    "concepts": [
+      "precedence",
+      "function_call",
+      "operator_binary_||"
+    ],
+    "negativeLaws": [
+      "error_base_student_error_in_complex",
+      "error_base_higher_precedence_right"
+    ],
+    "tags": [
+      "C#",
+      "basics",
+      "operators",
+      "order",
+      "evaluation"
+    ]
+  },
+  {
+    "questionType": "ORDERING",
+    "questionData": {
+      "questionType": "ORDER",
+      "questionDomainType": "OrderOperators",
+      "questionText": "* ++ a",
+      "options": {
+        "requireContext": true
+      },
+      "answerObjects": [
+        {
+          "answerId": 0,
+          "hyperText": "* at start",
+          "domainInfo": "op__0__1",
+          "isRightCol": false,
+          "concept": "operator_unary_*",
+          "responsesLeft": [],
+          "responsesRight": []
+        },
+        {
+          "answerId": 1,
+          "hyperText": "++ between * and a",
+          "domainInfo": "op__0__2",
+          "isRightCol": false,
+          "concept": "operator_prefix_++",
+          "responsesLeft": [],
+          "responsesRight": []
+        }
+      ],
+      "statementFacts": [
+        {
+          "object": "*",
+          "subject": "operator"
+        },
+        {
+          "object": "++",
+          "subject": "operator"
+        },
+        {
+          "object": "a"
+        }
+      ]
+    },
+    "concepts": [
+      "associativity",
+      "operator_unary_*",
+      "operator_prefix_++"
+    ],
+    "negativeLaws": [
+      "error_base_higher_precedence_right"
+    ],
+    "tags": [
+      "C#",
+      "basics",
+      "operators",
+      "order",
+      "evaluation"
+    ]
+  },
+  {
+    "questionType": "ORDERING",
+    "questionData": {
+      "questionType": "ORDER",
+      "questionDomainType": "OrderOperators",
+      "questionText": "* ++ a + b",
+      "options": {
+        "requireContext": true
+      },
+      "answerObjects": [
+        {
+          "answerId": 0,
+          "hyperText": "* at start",
+          "domainInfo": "op__0__1",
+          "isRightCol": false,
+          "concept": "operator_unary_*",
+          "responsesLeft": [],
+          "responsesRight": []
+        },
+        {
+          "answerId": 1,
+          "hyperText": "++ between * and a",
+          "domainInfo": "op__0__2",
+          "isRightCol": false,
+          "concept": "operator_prefix_++",
+          "responsesLeft": [],
+          "responsesRight": []
+        },
+        {
+          "answerId": 2,
+          "hyperText": "+ between a and b",
+          "domainInfo": "op__0__4",
+          "isRightCol": false,
+          "concept": "operator_binary_+",
+          "responsesLeft": [],
+          "responsesRight": []
+        }
+      ],
+      "statementFacts": [
+        {
+          "object": "*",
+          "subject": "operator"
+        },
+        {
+          "object": "++",
+          "subject": "operator"
+        },
+        {
+          "object": "a"
+        },
+        {
+          "object": "+",
+          "subject": "operator"
+        },
+        {
+          "object": "b"
+        }
+      ]
+    },
+    "concepts": [
+      "precedence",
+      "operator_unary_*",
+      "operator_prefix_++",
+      "operator_binary_+"
+    ],
+    "negativeLaws": [
+      "error_base_higher_precedence_right",
+      "error_base_higher_precedence_left"
+    ],
+    "tags": [
+      "C#",
+      "basics",
+      "operators",
+      "order",
+      "evaluation"
+    ]
+  },
+  {
+    "questionType": "ORDERING",
+    "questionData": {
+      "questionType": "ORDER",
+      "questionDomainType": "OrderOperators",
+      "questionText": "* a [ b + c ] + e",
+      "options": {
+        "requireContext": true
+      },
+      "answerObjects": [
+        {
+          "answerId": 0,
+          "hyperText": "* at start",
+          "domainInfo": "op__0__1",
+          "isRightCol": false,
+          "concept": "operator_unary_*",
+          "responsesLeft": [],
+          "responsesRight": []
+        },
+        {
+          "answerId": 1,
+          "hyperText": "[ between a and b",
+          "domainInfo": "op__0__3",
+          "isRightCol": false,
+          "concept": "operator_[",
+          "responsesLeft": [],
+          "responsesRight": []
+        },
+        {
+          "answerId": 2,
+          "hyperText": "+ between b and c",
+          "domainInfo": "op__0__5",
+          "isRightCol": false,
+          "concept": "operator_binary_+",
+          "responsesLeft": [],
+          "responsesRight": []
+        },
+        {
+          "answerId": 3,
+          "hyperText": "+ between ] and e",
+          "domainInfo": "op__0__8",
+          "isRightCol": false,
+          "concept": "operator_binary_+",
+          "responsesLeft": [],
+          "responsesRight": []
+        }
+      ],
+      "statementFacts": [
+        {
+          "object": "*",
+          "subject": "operator"
+        },
+        {
+          "object": "a"
+        },
+        {
+          "object": "[",
+          "subject": "operator"
+        },
+        {
+          "object": "b"
+        },
+        {
+          "object": "+",
+          "subject": "operator"
+        },
+        {
+          "object": "c"
+        },
+        {
+          "object": "]"
+        },
+        {
+          "object": "+",
+          "subject": "operator"
+        },
+        {
+          "object": "e"
+        }
+      ]
+    },
+    "concepts": [
+      "precedence",
+      "operator_binary_+",
+      "operator_[",
+      "operator_unary_*"
+    ],
+    "negativeLaws": [
+      "error_base_student_error_in_complex",
+      "error_base_higher_precedence_left"
+    ],
+    "tags": [
+      "C#",
+      "basics",
+      "operators",
+      "order",
+      "evaluation"
+    ]
+  },
+  {
+    "questionType": "ORDERING",
+    "questionData": {
+      "questionType": "ORDER",
+      "questionDomainType": "OrderOperators",
+      "questionText": "a + b [ c + d ] + e",
+      "options": {
+        "requireContext": true
+      },
+      "answerObjects": [
+        {
+          "answerId": 0,
+          "hyperText": "+ between a and b",
+          "domainInfo": "op__0__2",
+          "isRightCol": false,
+          "concept": "operator_binary_+",
+          "responsesLeft": [],
+          "responsesRight": []
+        },
+        {
+          "answerId": 1,
+          "hyperText": "[ between b and c",
+          "domainInfo": "op__0__4",
+          "isRightCol": false,
+          "concept": "operator_[",
+          "responsesLeft": [],
+          "responsesRight": []
+        },
+        {
+          "answerId": 2,
+          "hyperText": "+ between c and d",
+          "domainInfo": "op__0__6",
+          "isRightCol": false,
+          "concept": "operator_binary_+",
+          "responsesLeft": [],
+          "responsesRight": []
+        },
+        {
+          "answerId": 3,
+          "hyperText": "+ between ] and e",
+          "domainInfo": "op__0__9",
+          "isRightCol": false,
+          "concept": "operator_binary_+",
+          "responsesLeft": [],
+          "responsesRight": []
+        }
+      ],
+      "statementFacts": [
+        {
+          "object": "a"
+        },
+        {
+          "object": "+",
+          "subject": "operator"
+        },
+        {
+          "object": "b"
+        },
+        {
+          "object": "[",
+          "subject": "operator"
+        },
+        {
+          "object": "c"
+        },
+        {
+          "object": "+",
+          "subject": "operator"
+        },
+        {
+          "object": "d"
+        },
+        {
+          "object": "]"
+        },
+        {
+          "object": "+",
+          "subject": "operator"
+        },
+        {
+          "object": "e"
+        }
+      ]
+    },
+    "concepts": [
+      "associativity",
+      "precedence",
+      "operator_binary_+",
+      "operator_["
+    ],
+    "negativeLaws": [
+      "error_base_student_error_in_complex",
+      "error_base_same_precedence_left_associativity_left",
+      "error_base_higher_precedence_left",
+      "error_base_higher_precedence_right"
+    ],
+    "tags": [
+      "C#",
+      "basics",
+      "operators",
+      "order",
+      "evaluation"
+    ]
+  },
+  {
+    "questionType": "ORDERING",
+    "questionData": {
+      "questionType": "ORDER",
+      "questionDomainType": "OrderOperators",
+      "questionText": "a + b ? c + d : e + f ? g + h : i + j",
+      "options": {
+        "requireContext": true
+      },
+      "answerObjects": [
+        {
+          "answerId": 0,
+          "hyperText": "+ between a and b",
+          "domainInfo": "op__0__2",
+          "isRightCol": false,
+          "concept": "operator_binary_+",
+          "responsesLeft": [],
+          "responsesRight": []
+        },
+        {
+          "answerId": 1,
+          "hyperText": "? between b and c",
+          "domainInfo": "op__0__4",
+          "isRightCol": false,
+          "concept": "operator_ternary",
+          "responsesLeft": [],
+          "responsesRight": []
+        },
+        {
+          "answerId": 2,
+          "hyperText": "+ between c and d",
+          "domainInfo": "op__0__6",
+          "isRightCol": false,
+          "concept": "operator_binary_+",
+          "responsesLeft": [],
+          "responsesRight": []
+        },
+        {
+          "answerId": 3,
+          "hyperText": "+ between e and f",
+          "domainInfo": "op__0__10",
+          "isRightCol": false,
+          "concept": "operator_binary_+",
+          "responsesLeft": [],
+          "responsesRight": []
+        },
+        {
+          "answerId": 4,
+          "hyperText": "? between f and g",
+          "domainInfo": "op__0__12",
+          "isRightCol": false,
+          "concept": "operator_ternary",
+          "responsesLeft": [],
+          "responsesRight": []
+        },
+        {
+          "answerId": 5,
+          "hyperText": "+ between g and h",
+          "domainInfo": "op__0__14",
+          "isRightCol": false,
+          "concept": "operator_binary_+",
+          "responsesLeft": [],
+          "responsesRight": []
+        },
+        {
+          "answerId": 6,
+          "hyperText": "+ between h and j",
+          "domainInfo": "op__0__18",
+          "isRightCol": false,
+          "concept": "operator_binary_+",
+          "responsesLeft": [],
+          "responsesRight": []
+        }
+      ],
+      "statementFacts": [
+        {
+          "object": "a"
+        },
+        {
+          "object": "+",
+          "subject": "operator"
+        },
+        {
+          "object": "b"
+        },
+        {
+          "object": "?",
+          "subject": "operator"
+        },
+        {
+          "object": "c"
+        },
+        {
+          "object": "+",
+          "subject": "operator"
+        },
+        {
+          "object": "d"
+        },
+        {
+          "object": ":"
+        },
+        {
+          "object": "e"
+        },
+        {
+          "object": "+",
+          "subject": "operator"
+        },
+        {
+          "object": "f"
+        },
+        {
+          "object": "?",
+          "subject": "operator"
+        },
+        {
+          "object": "g"
+        },
+        {
+          "object": "+",
+          "subject": "operator"
+        },
+        {
+          "object": "h"
+        },
+        {
+          "object": ":"
+        },
+        {
+          "object": "i"
+        },
+        {
+          "object": "+",
+          "subject": "operator"
+        },
+        {
+          "object": "j"
+        }
+      ]
+    },
+    "concepts": [
+      "associativity",
+      "precedence",
+      "operator_binary_+",
+      "operator_ternary"
+    ],
+    "negativeLaws": [
+      "error_base_same_precedence_right_associativity_right",
+      "error_base_student_error_strict_operands_order_base"
+    ],
+    "tags": [
+      "C#",
+      "basics",
+      "operators",
+      "order",
+      "evaluation"
+    ]
+  },
+  {
+    "questionType": "ORDERING",
+    "questionData": {
+      "questionType": "ORDER",
+      "questionDomainType": "OrderOperators",
+      "questionText": "++ a || b + c",
+      "options": {
+        "requireContext": true
+      },
+      "answerObjects": [
+        {
+          "answerId": 0,
+          "hyperText": "++ at start",
+          "domainInfo": "op__0__1",
+          "isRightCol": false,
+          "concept": "operator_prefix_++",
+          "responsesLeft": [],
+          "responsesRight": []
+        },
+        {
+          "answerId": 1,
+          "hyperText": "|| between a and b",
+          "domainInfo": "op__0__3",
+          "isRightCol": false,
+          "concept": "operator_binary_||",
+          "responsesLeft": [],
+          "responsesRight": []
+        },
+        {
+          "answerId": 2,
+          "hyperText": "+ between b and c",
+          "domainInfo": "op__0__5",
+          "isRightCol": false,
+          "concept": "operator_binary_+",
+          "responsesLeft": [],
+          "responsesRight": []
+        }
+      ],
+      "statementFacts": [
+        {
+          "object": "++",
+          "subject": "operator"
+        },
+        {
+          "object": "a"
+        },
+        {
+          "object": "||",
+          "subject": "operator"
+        },
+        {
+          "object": "b"
+        },
+        {
+          "object": "+",
+          "subject": "operator"
+        },
+        {
+          "object": "c"
+        }
+      ]
+    },
+    "concepts": [
+      "precedence",
+      "operator_prefix_++",
+      "operator_binary_+",
+      "operator_binary_||",
+      "operator_evaluating_left_operand_first"
+    ],
+    "negativeLaws": [
+      "error_base_student_error_strict_operands_order_base"
+    ],
+    "tags": [
+      "C#",
+      "basics",
+      "operators",
+      "order",
+      "evaluation"
+    ]
+  },
+  {
+    "questionType": "ORDERING",
+    "questionData": {
+      "questionType": "ORDER",
+      "questionDomainType": "OrderOperators",
+      "questionText": "++ a - b + c",
+      "options": {
+        "requireContext": true
+      },
+      "answerObjects": [
+        {
+          "answerId": 0,
+          "hyperText": "++ at start",
+          "domainInfo": "op__0__1",
+          "isRightCol": false,
+          "concept": "operator_prefix_++",
+          "responsesLeft": [],
+          "responsesRight": []
+        },
+        {
+          "answerId": 1,
+          "hyperText": "- between a and b",
+          "domainInfo": "op__0__3",
+          "isRightCol": false,
+          "concept": "operator_binary_-",
+          "responsesLeft": [],
+          "responsesRight": []
+        },
+        {
+          "answerId": 2,
+          "hyperText": "+ between b and c",
+          "domainInfo": "op__0__5",
+          "isRightCol": false,
+          "concept": "operator_binary_+",
+          "responsesLeft": [],
+          "responsesRight": []
+        }
+      ],
+      "statementFacts": [
+        {
+          "object": "++",
+          "subject": "operator"
+        },
+        {
+          "object": "a"
+        },
+        {
+          "object": "-",
+          "subject": "operator"
+        },
+        {
+          "object": "b"
+        },
+        {
+          "object": "+",
+          "subject": "operator"
+        },
+        {
+          "object": "c"
+        }
+      ]
+    },
+    "concepts": [
+      "precedence",
+      "operator_prefix_++",
+      "operator_binary_+",
+      "operator_binary_-"
+    ],
+    "negativeLaws": [
+      "error_base_higher_precedence_left",
+      "error_base_same_precedence_left_associativity_left"
+    ],
+    "tags": [
+      "C#",
+      "basics",
+      "operators",
+      "order",
+      "evaluation"
     ]
   }
 ]

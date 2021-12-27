@@ -3,12 +3,11 @@ package org.vstu.compprehension.models.businesslogic.domains;
 import lombok.val;
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.HashSetValuedHashMap;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.text.StringSubstitutor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.vstu.compprehension.Service.LocalizationService;
 import org.vstu.compprehension.models.entities.*;
-import org.vstu.compprehension.models.entities.EnumData.FeedbackType;
-import org.vstu.compprehension.models.entities.EnumData.Language;
-import org.vstu.compprehension.models.entities.EnumData.QuestionType;
+import org.vstu.compprehension.models.entities.EnumData.*;
 import org.vstu.compprehension.models.entities.QuestionOptions.*;
 import org.vstu.compprehension.utils.HyperText;
 import com.google.gson.Gson;
@@ -17,18 +16,22 @@ import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
 import org.vstu.compprehension.models.businesslogic.*;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.stereotype.Component;
+import org.vstu.compprehension.utils.StringHelper;
 
+import javax.inject.Singleton;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static java.lang.Math.max;
 import static org.junit.jupiter.api.Assertions.*;
 
+
+
 @Component
+@Singleton
 public class ProgrammingLanguageExpressionDomain extends Domain {
     static final String EVALUATION_ORDER_QUESTION_TYPE = "OrderOperators";
     static final String EVALUATION_ORDER_SUPPLEMENTARY_QUESTION_TYPE = "OrderOperatorsSupplementary";
@@ -38,6 +41,10 @@ public class ProgrammingLanguageExpressionDomain extends Domain {
     static final String LAWS_CONFIG_PATH = "org/vstu/compprehension/models/businesslogic/domains/programming-language-expression-domain-laws.json";
     static final String QUESTIONS_CONFIG_PATH = "org/vstu/compprehension/models/businesslogic/domains/programming-language-expression-domain-questions.json";
     static final String SUPPLEMENTARY_CONFIG_PATH = "org/vstu/compprehension/models/businesslogic/domains/programming-language-expression-domain-supplementary-strategy.json";
+    public static final String MESSAGES_CONFIG_PATH = "classpath:/org/vstu/compprehension/models/businesslogic/domains/programming-language-expression-domain-messages";
+
+    @Autowired
+    private LocalizationService localizationService;
 
     public ProgrammingLanguageExpressionDomain() {
         name = "ProgrammingLanguageExpressionDomain";
@@ -94,6 +101,13 @@ public class ProgrammingLanguageExpressionDomain extends Domain {
         Concept operandsTypeConcept = addConcept("operands_type");
         Concept precedenceTypeConcept = addConcept("precedence_type");
         Concept systemIntegrationTestConcept = addConcept("SystemIntegrationTest");
+        Concept error = addConcept("error");
+        Concept errorHigherPrecedenceLeft = addConcept("error_base_higher_precedence_left");
+        Concept errorHigherPrecedenceRight = addConcept("error_base_higher_precedence_right");
+        Concept errorSamePrecedenceLeftAssociativityLeft = addConcept("error_base_same_precedence_left_associativity_left");
+        Concept errorSamePrecedenceRightAssociativityRight = addConcept("error_base_same_precedence_right_associativity_right");
+        Concept errorInComplex = addConcept("error_base_student_error_in_complex");
+        Concept errorStrictOperandsOrder = addConcept("error_base_student_error_strict_operands_order");
     }
 
     private Concept addConcept(String name, List<Concept> baseConcepts) {
@@ -125,12 +139,15 @@ public class ProgrammingLanguageExpressionDomain extends Domain {
         List<SupplementaryAnswerConfig> answers;
     }
 
-    public HashMap<String, HashMap<String, List<SupplementaryAnswerTransition>>> supplementaryConfig;
+    private HashMap<String, HashMap<String, List<SupplementaryAnswerTransition>>> supplementaryConfig;
+    public  HashMap<String, HashMap<String, List<SupplementaryAnswerTransition>>> getSupplementaryConfig() {
+        return supplementaryConfig;
+    }
     private void readSupplementaryConfig(InputStream inputStream) {
         supplementaryConfig = new HashMap<>();
 
         SupplementaryConfig[] configs = new Gson().fromJson(
-                new InputStreamReader(inputStream),
+                new InputStreamReader(inputStream, StandardCharsets.UTF_8),
                 SupplementaryConfig[].class);
 
         for (SupplementaryConfig config : configs) {
@@ -154,7 +171,7 @@ public class ProgrammingLanguageExpressionDomain extends Domain {
                 .registerTypeAdapterFactory(runtimeTypeAdapterFactory).create();
 
         Law[] lawForms = gson.fromJson(
-                new InputStreamReader(inputStream),
+                new InputStreamReader(inputStream, StandardCharsets.UTF_8),
                 Law[].class);
 
         for (Law lawForm : lawForms) {
@@ -164,6 +181,11 @@ public class ProgrammingLanguageExpressionDomain extends Domain {
                 negativeLaws.add((NegativeLaw) lawForm);
             }
         }
+    }
+
+    @Override
+    public List<Concept> getLawConcepts(Law law) {
+        return law.getConcepts();
     }
 
     @Override
@@ -200,10 +222,19 @@ public class ProgrammingLanguageExpressionDomain extends Domain {
                 .registerTypeAdapterFactory(runtimeTypeAdapterFactory).create();
 
         Question[] questions = gson.fromJson(
-                new InputStreamReader(inputStream),
+                new InputStreamReader(inputStream, StandardCharsets.UTF_8),
                 Question[].class);
 
         Collections.addAll(res, questions);
+
+        // write questionName to each template
+        //TODO: make normal check, other question types also can be longer than questionName restriction
+        for (Question q : res) {
+            if (!q.isSupplementary()) {
+                q.getQuestionData().setQuestionName(q.getQuestionText().getText());
+            }
+        }
+
         return res;
     }
 
@@ -216,11 +247,15 @@ public class ProgrammingLanguageExpressionDomain extends Domain {
         return QUESTIONS;
     }
 
-    Question makeQuestionCopy(Question q, ExerciseAttemptEntity exerciseAttemptEntity) {
+    private String getMessage(String base_question_text, Language preferred_language) {
+        return localizationService.getMessage(base_question_text, Language.getLocale(preferred_language));
+    }
+
+    Question makeQuestionCopy(Question q, ExerciseAttemptEntity exerciseAttemptEntity, Language userLang) {
         QuestionOptionsEntity orderQuestionOptions = OrderQuestionOptionsEntity.builder()
                 .requireContext(true)
                 .showTrace(false)
-                .multipleSelectionEnabled(true)
+                .multipleSelectionEnabled(false)
                 .orderNumberOptions(new OrderQuestionOptionsEntity.OrderNumberOptions("/", OrderQuestionOptionsEntity.OrderNumberPosition.SUFFIX, null))
                 .build();
 
@@ -244,7 +279,13 @@ public class ProgrammingLanguageExpressionDomain extends Domain {
             newAnswerObjectEntity.setAnswerId(answerObjectEntity.getAnswerId());
             newAnswerObjectEntity.setConcept(answerObjectEntity.getConcept());
             newAnswerObjectEntity.setDomainInfo(answerObjectEntity.getDomainInfo());
-            newAnswerObjectEntity.setHyperText(answerObjectEntity.getHyperText());
+
+            String text = getMessage(answerObjectEntity.getHyperText(), userLang);
+            if (text.equals("")) {
+                text = answerObjectEntity.getHyperText();
+            }
+
+            newAnswerObjectEntity.setHyperText(text);
             newAnswerObjectEntity.setQuestion(entity);
             newAnswerObjectEntity.setRightCol(answerObjectEntity.isRightCol());
             newAnswerObjectEntity.setResponsesLeft(new ArrayList<>());
@@ -252,28 +293,33 @@ public class ProgrammingLanguageExpressionDomain extends Domain {
             answerObjectEntities.add(newAnswerObjectEntity);
         }
         entity.setAnswerObjects(answerObjectEntities);
-        entity.setAreAnswersRequireContext(true);
         entity.setExerciseAttempt(exerciseAttemptEntity);
         entity.setQuestionDomainType(q.getQuestionDomainType());
         entity.setStatementFacts(getBackendFacts(q.getStatementFacts()));
         entity.setQuestionType(q.getQuestionType());
+        entity.setQuestionName(q.getQuestionName());
+
+        String text = getMessage(q.getQuestionText().getText(), userLang);
+        if (text.equals("")) {
+            text = q.getQuestionText().getText();
+        }
 
         switch (q.getQuestionType()) {
             case ORDER:
-                val baseQuestionText = "<p>Press the operators in the expression in the order they are evaluated</p>";
-                entity.setQuestionText(baseQuestionText + ExpressionToHtml(q.getQuestionText().getText()));
+                val baseQuestionText = getMessage("expr_domain.BASE_QUESTION_TEXT", userLang);
+                entity.setQuestionText(baseQuestionText + ExpressionToHtml(q.getStatementFacts()));
                 entity.setOptions(orderQuestionOptions);
                 return new Ordering(entity);
             case MATCHING:
-                entity.setQuestionText(QuestionTextToHtml(q.getQuestionText().getText()));
+                entity.setQuestionText(QuestionTextToHtml(text));
                 entity.setOptions(matchingQuestionOptions);
                 return new Matching(entity);
             case MULTI_CHOICE:
-                entity.setQuestionText(QuestionTextToHtml(q.getQuestionText().getText()));
+                entity.setQuestionText(QuestionTextToHtml(text));
                 entity.setOptions(multiChoiceQuestionOptions);
                 return new MultiChoice(entity);
             case SINGLE_CHOICE:
-                entity.setQuestionText(QuestionTextToHtml(q.getQuestionText().getText()));
+                entity.setQuestionText(QuestionTextToHtml(text));
                 entity.setOptions(singleChoiceQuestionOptions);
                 return new SingleChoice(entity);
             default:
@@ -288,19 +334,35 @@ public class ProgrammingLanguageExpressionDomain extends Domain {
         for (Concept concept : questionRequest.getTargetConcepts()) {
             conceptNames.add(concept.getName());
         }
-        HashSet<String> allowedConceptNames = new HashSet<>();
-        for (Concept concept : questionRequest.getAllowedConcepts()) {
-            allowedConceptNames.add(concept.getName());
-        }
         HashSet<String> deniedConceptNames = new HashSet<>();
         for (Concept concept : questionRequest.getDeniedConcepts()) {
             deniedConceptNames.add(concept.getName());
         }
         deniedConceptNames.add("supplementary");
 
-        Question res = findQuestion(tags, conceptNames, allowedConceptNames, deniedConceptNames, new HashSet<>());
+        HashSet<String> lawNames = new HashSet<>();
+        if (questionRequest.getTargetLaws() != null) {
+            for (Law law : questionRequest.getTargetLaws()) {
+                lawNames.add(law.getName());
+            }
+        }
+
+        HashSet<String> deniedLawNames = new HashSet<>();
+        if (questionRequest.getDeniedLaws() != null) {
+            for (Law law : questionRequest.getDeniedLaws()) {
+                deniedLawNames.add(law.getName());
+            }
+        }
+
+        HashSet<String> deniedQuestions = new HashSet<>();
+        if (questionRequest.getExerciseAttempt() != null &&
+                questionRequest.getExerciseAttempt().getQuestions() != null &&
+                questionRequest.getExerciseAttempt().getQuestions().size() > 0) {
+            deniedQuestions.add(questionRequest.getExerciseAttempt().getQuestions().get(questionRequest.getExerciseAttempt().getQuestions().size() - 1).getQuestionName());
+        }
+        Question res = findQuestion(tags, conceptNames, deniedConceptNames, lawNames, deniedLawNames, deniedQuestions);
         if (res != null) {
-            return makeQuestionCopy(res, questionRequest.getExerciseAttempt());
+            return makeQuestionCopy(res, questionRequest.getExerciseAttempt(), userLanguage);
         }
 
         // make a SingleChoice question ...
@@ -309,7 +371,6 @@ public class ProgrammingLanguageExpressionDomain extends Domain {
         question.setQuestionText("Choose associativity of operator binary +");
         question.setQuestionType(QuestionType.SINGLE_CHOICE);
         question.setQuestionDomainType("ChooseAssociativity");
-        question.setAreAnswersRequireContext(true);
         question.setAnswerObjects(new ArrayList<>(Arrays.asList(
                 createAnswerObject(question, 0, "left", "left_associativity", "left", true),
                 createAnswerObject(question, 1, "right", "right_associativity", "right", true),
@@ -329,29 +390,24 @@ public class ProgrammingLanguageExpressionDomain extends Domain {
         return answerObject;
     }
 
-    public static String ExpressionToHtml(String text) {
-        StringBuilder sb = new StringBuilder(text);
-
-        // Wrap every token of the expression with <span> and some metadata ...
-        Pattern pattern = Pattern.compile("\\<\\=|\\>\\=|\\=\\=|\\!\\=|\\<\\<|\\>\\>|\\+|\\-|\\*|\\/|\\<|\\>|\\w+");
-        Matcher matcher = pattern.matcher(sb.toString());
+    public static String ExpressionToHtml(List<BackendFactEntity> expression) {
+        StringBuilder sb = new StringBuilder("");
+        sb.append("<p class='comp-ph-expr'>");
         int idx = 0;
         int anwerIdx = -1;
-        int offset = 0;
-        while (offset < sb.length() && matcher.find(offset)) {
-            String match = matcher.group(0);
-            String replaceStr = match.matches("\\w")
-                    ? "<span data-comp-ph-pos='" + (++idx) +"' class='comp-ph-expr-const'>" + matcher.group(0) +"</span>"
-                    : "<span data-comp-ph-pos='" + (++idx) +"' id='answer_" + (++anwerIdx) +"' class='comp-ph-expr-op-btn'>" + matcher.group(0) +"</span>";
-
-            sb.replace(matcher.start(), matcher.end(), replaceStr);
-            offset = matcher.start() + replaceStr.length() ;
-            matcher = pattern.matcher(sb.toString());
+        for (BackendFactEntity fact : expression) {
+            if (fact.getSubject() != null && fact.getSubject().equals("operator")) {
+                sb.append("<span data-comp-ph-pos='").append(++idx).append("' id='answer_").append(++anwerIdx).append("' class='comp-ph-expr-op-btn'>").append(fact.getObject()).append("</span>");
+            } else {
+                sb.append("<span data-comp-ph-pos='").append(++idx).append("' class='comp-ph-expr-const'>").append(fact.getObject()).append("</span>");
+            }
         }
 
-        sb.insert(0, "<p class='comp-ph-expr'>");
-        sb.append("<!-- Original expression: " + text + "-->");
-        sb.append("</p>");
+        sb.append("<!-- Original expression: ");
+        for (BackendFactEntity fact : expression) {
+            sb.append(fact.getObject()).append(" ");
+        }
+        sb.append("-->").append("</p>");
         return QuestionTextToHtml(sb.toString());
     }
 
@@ -373,18 +429,15 @@ public class ProgrammingLanguageExpressionDomain extends Domain {
         int index = 0;
         for (BackendFactEntity token : expression) {
             index++;
-            for (int step = 0; step <= expression.size(); ++step) {
-                String name = getName(step, index);
-                facts.add(new BackendFactEntity(name, "rdf:type", "owl:NamedIndividual"));
-                facts.add(new BackendFactEntity("owl:NamedIndividual", name, "index", "xsd:int", String.valueOf(index)));
-                facts.add(new BackendFactEntity("owl:NamedIndividual", name, "step", "xsd:int", String.valueOf(step)));
-            }
+            String name = getName(0, index);
+            facts.add(new BackendFactEntity(name, "rdf:type", "owl:NamedIndividual"));
+            facts.add(new BackendFactEntity("owl:NamedIndividual", name, "index", "xsd:int", String.valueOf(index)));
             facts.add(new BackendFactEntity("owl:NamedIndividual", getName(0, index), "text", "xsd:string", token.getObject()));
             if (token.getVerb() != null) {
                 facts.add(new BackendFactEntity("owl:NamedIndividual", getName(0, index), token.getVerb(), token.getSubjectType(), token.getSubject()));
             }
         }
-        facts.add(new BackendFactEntity("owl:NamedIndividual", getName(0, index), "last", "xsd:boolean", "true"));
+        facts.add(new BackendFactEntity("owl:NamedIndividual", getName(0, expression.size()), "last_index", "xsd:boolean", "true"));
         return facts;
     }
 
@@ -471,7 +524,14 @@ public class ProgrammingLanguageExpressionDomain extends Domain {
                     "precedence",
                     "associativity",
                     "in_complex",
-                    "complex_beginning"
+                    "complex_beginning",
+                    "is_function_call",
+                    "student_error_in_complex_base",
+                    "student_error_more_precedence_base",
+                    "student_error_right_assoc_base",
+                    "student_error_strict_operands_order_base",
+                    "student_error_left_assoc_base"
+
             ));
         } else if (questionDomainType.equals(DEFINE_TYPE_QUESTION_TYPE)) {
             return new ArrayList<>(Arrays.asList(
@@ -498,11 +558,13 @@ public class ProgrammingLanguageExpressionDomain extends Domain {
                     "student_error_right_assoc_base",
                     "student_error_in_complex_base",
                     "student_error_strict_operands_order_base",
+                    "before_third_operator",
                     "text",
                     "index",
                     "before_direct",
                     "student_pos_number",
-                    "is_operand"
+                    "is_operand",
+                    "is_function_call"
             ));
         } else if (questionDomainType.equals(DEFINE_TYPE_QUESTION_TYPE)) {
             return new ArrayList<>(Arrays.asList(
@@ -679,6 +741,7 @@ public class ProgrammingLanguageExpressionDomain extends Domain {
     public ProcessSolutionResult processSolution(List<BackendFactEntity> solution) {
         Map<String, String> studentPos = new HashMap<>();
         HashSet<String> isOperand = new HashSet<>();
+        HashSet<String> isNotCallableOperator = new HashSet<>();
         HashSet<String> allTokens = new HashSet<>();
         for (BackendFactEntity fact : solution) {
             if (fact.getVerb().equals("before_direct")) {
@@ -688,12 +751,17 @@ public class ProgrammingLanguageExpressionDomain extends Domain {
                 studentPos.put(fact.getSubject(), fact.getObject());
             } else if (fact.getVerb().equals("is_operand")) {
                 isOperand.add(fact.getSubject());
+            } else if (fact.getVerb().equals("is_function_call") && fact.getObject().equals("false")) {
+                isNotCallableOperator.add(fact.getSubject());
             }
         }
 
         int IterationsLeft = 0;
         for (String operator : allTokens) {
-            if (operator.startsWith("op__0") && !isOperand.contains(operator) && !studentPos.containsKey(operator)) {
+            if (operator.startsWith("op__0") &&
+                    !isOperand.contains(operator) &&
+                    !isNotCallableOperator.contains(operator) &&
+                    !studentPos.containsKey(operator)) {
                 IterationsLeft++;
             }
         }
@@ -746,11 +814,13 @@ public class ProgrammingLanguageExpressionDomain extends Domain {
         AnswerObjectEntity last = null;
         ArrayList<AnswerObjectEntity> explain = new ArrayList<>();
         TreeMap<Integer, String> posToExplanation = new TreeMap<>();
+        
+        Language lang = q.getQuestionData().getExerciseAttempt().getUser().getPreferred_language();
 
         int answerPos = Integer.parseInt(indexes.get(answer.getDomainInfo()));
         String answerText = texts.get(answer.getDomainInfo());
-        String answerTemplate = answerText + " at pos " + answerPos;
-        posToExplanation.put(-1, "Operator " + answerTemplate + " evaluates ");
+        String answerTemplate = StringHelper.joinWithSpace(answerText, getMessage("expr_domain.AT_POS", lang), answerPos);
+        posToExplanation.put(-1, StringHelper.joinWithSpace(getMessage("expr_domain.OPERATOR", lang), answerTemplate, getMessage("expr_domain.EVALUATES", lang)));
 
         for (AnswerObjectEntity answerObjectEntity : q.getAnswerObjects()) {
             if (beforeByThirdOperator.containsKey(answerObjectEntity.getDomainInfo())) {
@@ -776,17 +846,27 @@ public class ProgrammingLanguageExpressionDomain extends Domain {
                     if (before.containsMapping(answerObjectEntity.getDomainInfo(), thirdOperator)) {
                         int pos = Integer.parseInt(indexes.get(answerObjectEntity.getDomainInfo()));
                         String text = texts.get(answerObjectEntity.getDomainInfo());
-                        String template = text + " at pos " + pos;
+                        String template = StringHelper.joinWithSpace(text, getMessage("expr_domain.AT_POS", lang), pos);
 
                         int thirdPos = Integer.parseInt(indexes.get(thirdOperator));
                         String thirdText = texts.get(thirdOperator);
-                        String thirdTemplate = thirdText + " at pos " + thirdPos;
+                        String thirdTemplate = StringHelper.joinWithSpace(thirdText, getMessage("expr_domain.AT_POS", lang), thirdPos);
 
                         if (isStrict.containsKey(thirdOperator)) {
-                            posToExplanation.put(pos, "before operator " + template + ": operator " +
-                                    answerTemplate + " belongs to the left operand of operator " +
-                                    thirdTemplate + " while operator " + template + " to its right operand, and the left operand of operator " +
-                                    thirdText + " evaluates before its right operand");
+                            posToExplanation.put(pos, StringHelper.joinWithSpace(
+                                    getMessage("expr_domain.BEFORE_OPERATOR", lang),
+                                    template,
+                                    ":",
+                                    getMessage("expr_domain.OPERATOR", lang),
+                                    answerTemplate,
+                                    getMessage("expr_domain.LEFT_SUBOPERATOR", lang),
+                                    thirdTemplate,
+                                    getMessage("expr_domain.WHILE_OPERATOR", lang),
+                                    template,
+                                    getMessage("expr_domain.TO_LEFT_OPERAND", lang) + ",",
+                                    getMessage("expr_domain.AND_LEFT_OPERAND", lang),
+                                    thirdText,
+                                    getMessage("expr_domain.EVALUATES_BEFORE_RIGHT", lang)));
                         }
                     }
                 }
@@ -796,21 +876,37 @@ public class ProgrammingLanguageExpressionDomain extends Domain {
                     if (before.containsMapping(answerObjectEntity.getDomainInfo(), thirdOperator)) {
                         int pos = Integer.parseInt(indexes.get(answerObjectEntity.getDomainInfo()));
                         String text = texts.get(answerObjectEntity.getDomainInfo());
-                        String template = text + " at pos " + pos;
+                        String template = StringHelper.joinWithSpace(text, getMessage("expr_domain.AT_POS", lang), pos);
 
                         int thirdPos = Integer.parseInt(indexes.get(thirdOperator));
                         String thirdText = texts.get(thirdOperator);
-                        String thirdTemplate = thirdText + " at pos " + thirdPos;
+                        String thirdTemplate = StringHelper.joinWithSpace(thirdText, getMessage("expr_domain.AT_POS", lang), thirdPos);
 
                         if (isStrict.containsKey(thirdOperator)) {
-                            posToExplanation.put(pos, "after operator " + template + ": operator " +
-                                    answerTemplate + " belongs to the right operand of operator " +
-                                    thirdTemplate + " while operator " + template + " to its left operand, and the left operand of operator " +
-                                    thirdText + " evaluates before its right operand");
+                            posToExplanation.put(pos, StringHelper.joinWithSpace(
+                                    getMessage("expr_domain.AFTER_OPERATOR", lang),
+                                    template,
+                                    ":",
+                                    getMessage("expr_domain.OPERATOR", lang),
+                                    answerTemplate,
+                                    getMessage("expr_domain.RIGHT_SUBOPERATOR", lang),
+                                    thirdTemplate,
+                                    getMessage("expr_domain.WHILE_OPERATOR", lang),
+                                    template,
+                                    getMessage("expr_domain.TO_LEFT_OPERAND", lang) + ",",
+                                    getMessage("expr_domain.AND_LEFT_OPERAND", lang),
+                                    thirdText,
+                                    getMessage("expr_domain.EVALUATES_BEFORE_RIGHT", lang)));
                         } else if (thirdText.equals("(")) {
-                            posToExplanation.put(pos, "after operator " + template + ": operator " +
-                                    template + " enclosed by parenthesis that starts at pos " + thirdPos +
-                                    ", all operators inside parenthesis evaluates before operators around parenthesis");
+                            posToExplanation.put(pos, StringHelper.joinWithSpace(
+                                    getMessage("expr_domain.AFTER_OPERATOR", lang),
+                                    template,
+                                    ":",
+                                    getMessage("expr_domain.OPERATOR", lang),
+                                    template,
+                                    getMessage("expr_domain.ENCLOSED_PARENTHESIS", lang),
+                                    thirdPos,
+                                    getMessage("expr_domain.INSIDE_PARENTHESIS_FIRST", lang)));
                         }
                     }
                 }
@@ -821,48 +917,54 @@ public class ProgrammingLanguageExpressionDomain extends Domain {
         for (AnswerObjectEntity reason : explain) {
             int pos = Integer.parseInt(indexes.get(reason.getDomainInfo()));
             String text = texts.get(reason.getDomainInfo());
-            String template = text  + " at pos " + pos;
+            String template = StringHelper.joinWithSpace(text, getMessage("expr_domain.AT_POS", lang), pos);
 
             if (beforeHighPriority.containsMapping(answer.getDomainInfo(), reason.getDomainInfo())) {
-                posToExplanation.put(pos, "before operator " + template + ": operator " +
-                        answerText + " has higher precedence than operator " + text);
+                posToExplanation.put(pos, StringHelper.joinWithSpace(
+                        getMessage("expr_domain.BEFORE_OPERATOR", lang), template, ":", getMessage("expr_domain.OPERATOR", lang),
+                        answerText, getMessage("expr_domain.HAS_HIGHER_PRECEDENCE", lang), getMessage("expr_domain.THAN_OPERATOR", lang), text));
             } else if (beforeHighPriority.containsMapping(reason.getDomainInfo(), answer.getDomainInfo())) {
-                posToExplanation.put(pos, "after operator " + template + ": operator " +
-                        answerText + " has lower precedence than operator " + text);
+                posToExplanation.put(pos, StringHelper.joinWithSpace(
+                        getMessage("expr_domain.AFTER_OPERATOR", lang), template, ":", getMessage("expr_domain.OPERATOR", lang),
+                        answerText, getMessage("expr_domain.HAS_LOWER_PRECEDENCE", lang), getMessage("expr_domain.THAN_OPERATOR", lang), text));
             } else if (beforeLeftAssoc.containsMapping(answer.getDomainInfo(), reason.getDomainInfo())) {
-                posToExplanation.put(pos, "before operator " + template + ": operator " +
-                        answerText + " has left associativity and evaluates left to right");
+                posToExplanation.put(pos, StringHelper.joinWithSpace(
+                        getMessage("expr_domain.BEFORE_OPERATOR", lang), template, ":", getMessage("expr_domain.OPERATOR", lang),
+                        answerText, getMessage("expr_domain.LEFT_ASSOC_DESC", lang)));
             } else if (beforeLeftAssoc.containsMapping(reason.getDomainInfo(), answer.getDomainInfo())) {
-                posToExplanation.put(pos, "after operator " + template + ": operator " +
-                        answerText + " has left associativity and evaluates left to right");
+                posToExplanation.put(pos, StringHelper.joinWithSpace(
+                        getMessage("expr_domain.AFTER_OPERATOR", lang), template, ":", getMessage("expr_domain.OPERATOR", lang),
+                        answerText, getMessage("expr_domain.LEFT_ASSOC_DESC", lang)));
             } else if (beforeRightAssoc.containsMapping(answer.getDomainInfo(), reason.getDomainInfo())) {
-                posToExplanation.put(pos, "before operator " + template + ": operator " +
-                        answerText + " has right associativity and evaluates right to left");
+                posToExplanation.put(pos, StringHelper.joinWithSpace(
+                        getMessage("expr_domain.BEFORE_OPERATOR", lang), template, ":", getMessage("expr_domain.OPERATOR", lang),
+                        answerText, getMessage("expr_domain.RIGHT_ASSOC_DESC", lang)));
             } else if (beforeRightAssoc.containsMapping(reason.getDomainInfo(), answer.getDomainInfo())) {
-                posToExplanation.put(pos, "after operator " + template + ": operator " +
-                        answerText + " has right associativity and evaluates right to left");
+                posToExplanation.put(pos, StringHelper.joinWithSpace(
+                        getMessage("expr_domain.AFTER_OPERATOR", lang), template, ":", getMessage("expr_domain.OPERATOR", lang),
+                        answerText, getMessage("expr_domain.RIGHT_ASSOC_DESC", lang)));
             }
         }
 
-        String result = "";
+        StringBuilder result = new StringBuilder();
         for (Map.Entry<Integer, String> kv : posToExplanation.entrySet()) {
-            result += kv.getValue() + "\n";
+            result.append(kv.getValue()).append("\n");
         }
 
-        return new HyperText(result);
+        return new HyperText(result.toString());
     }
 
     @Override
     public CorrectAnswer getAnyNextCorrectAnswer(Question q) {
         val lastCorrectInteraction = Optional.ofNullable(q.getQuestionData().getInteractions()).stream()
                 .flatMap(Collection::stream)
-                .filter(i -> i.getFeedback().getInteractionsLeft() >= 0 && i.getViolations().size() == 0) // select only interactions without mistakes
+                .filter(i -> i.getFeedback().getInteractionsLeft() >= 0 && i.getViolations().size() == 0)
                 .reduce((first, second) -> second);
-        val lastCorrectInteractionAnswers = lastCorrectInteraction
+        /*val lastCorrectInteractionAnswers = lastCorrectInteraction
                 .flatMap(i -> Optional.ofNullable(i.getResponses())).stream()
                 .flatMap(Collection::stream)
-                .map(r -> Pair.of(r.getLeftAnswerObject(), r.getRightAnswerObject()))
-                .collect(Collectors.toList());
+                .map(r -> new CorrectAnswer.Response(r.getLeftAnswerObject(), r.getRightAnswerObject(), r.getCreatedByInteraction().getInteractionType() == InteractionType.SEND_RESPONSE))
+                .collect(Collectors.toList());*/
 
         val solution = q.getSolutionFacts();
         assertNotNull(solution, "Call solve question before getAnyNextCorrectAnswer");
@@ -875,8 +977,8 @@ public class ProgrammingLanguageExpressionDomain extends Domain {
         for (AnswerObjectEntity answer : q.getAnswerObjects()) {
             for (CorrectAnswerImpl answerImpl : correctAnswerImpls) {
                 if (answerImpl.domainID.equals(answer.getDomainInfo())) {
-                    val answers = new ArrayList<>(lastCorrectInteractionAnswers);
-                    answers.add(Pair.of(answer, answer));
+                    val answers = new ArrayList<CorrectAnswer.Response>();
+                    answers.add(new CorrectAnswer.Response(answer, answer));
 
                     CorrectAnswer correctAnswer = new CorrectAnswer();
                     correctAnswer.question = q.getQuestionData();
@@ -891,9 +993,61 @@ public class ProgrammingLanguageExpressionDomain extends Domain {
     }
 
     @Override
-    public Question makeSupplementaryQuestion(QuestionEntity question, ViolationEntity violation) {
+    public Set<String> possibleViolations(Question q, List<ResponseEntity> completedSteps) {
+        Set<String> result = new HashSet<>();
+        Set<String> madeSteps = new HashSet<>();
+        if (completedSteps != null) {
+            for (ResponseEntity r : completedSteps) {
+                madeSteps.add(r.getLeftAnswerObject().getDomainInfo());
+                madeSteps.add(r.getRightAnswerObject().getDomainInfo());
+            }
+        }
+        for (BackendFactEntity f : q.getSolutionFacts()) {
+            if (f.getVerb().startsWith("student_error") && !madeSteps.contains(f.getSubject()) && !madeSteps.contains(f.getObject())
+                    && getIndexFromName(f.getSubject(), false).isPresent()
+                    && getIndexFromName(f.getObject(), false).isPresent()) {
+                if (f.getVerb().equals("student_error_more_precedence_base")) {
+                    if (getIndexFromName(f.getSubject(), false).orElse(0) > getIndexFromName(f.getObject(), false).orElse(0)) {
+                        result.add("error_base_higher_precedence_left");
+                    } else {
+                        result.add("error_base_higher_precedence_right");
+                    }
+                } else if (f.getVerb().equals("student_error_left_assoc_base")) {
+                    result.add("error_base_same_precedence_left_associativity_left");
+                } else if (f.getVerb().equals("student_error_right_assoc_base")) {
+                    result.add("error_base_same_precedence_right_associativity_right");
+                } else if (f.getVerb().equals("student_error_strict_operands_order_base")) {
+                    result.add("error_base_student_error_strict_operands_order_base");
+                } else if (f.getVerb().equals("student_error_in_complex_base")) {
+                    result.add("error_base_student_error_in_complex");
+                }
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public Set<Set<String>> possibleViolationsByStep(Question q, List<ResponseEntity> completedSteps) {
+        return new HashSet<>();
+    }
+
+    @Override
+    public boolean needSupplementaryQuestion(ViolationEntity violation) {
+        if (violation.getLawName().equals("error_base_student_error_in_complex") ||
+                violation.getLawName().equals("error_base_student_error_strict_operands_order_base")) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public Question makeSupplementaryQuestion(QuestionEntity question, ViolationEntity violation, Language userLang) {
+        if (!needSupplementaryQuestion(violation)) {
+            return null;
+        }
+
         HashSet<String> targetConcepts = new HashSet<>();
-        String failedLaw = violation.getLawName().startsWith("error_single_token_binary_operator") ? "first_OrderOperatorsSupplementary" : violation.getLawName();
+        String failedLaw = violation.getLawName().startsWith("error_base") ? "first_OrderOperatorsSupplementary" : violation.getLawName();
         targetConcepts.add(failedLaw);
         targetConcepts.add("supplementary");
 
@@ -905,16 +1059,16 @@ public class ProgrammingLanguageExpressionDomain extends Domain {
             return null;
         }
 
-        Question res = findQuestion(exerciseAttemptEntity.getExercise().getTags(), targetConcepts, new HashSet<>(), new HashSet<>(), new HashSet<>());
+        Question res = findQuestion(new ArrayList<>(), targetConcepts, new HashSet<>(), new HashSet<>(), new HashSet<>(), new HashSet<>());
         if (res != null) {
-            Question copy = makeQuestionCopy(res, exerciseAttemptEntity);
-            return fillSupplementaryAnswerObjects(question, failedLaw, copy);
+            Question copy = makeQuestionCopy(res, exerciseAttemptEntity, userLang);
+            return fillSupplementaryAnswerObjects(question, failedLaw, copy, userLang);
         }
 
         return null;
     }
 
-    Question fillSupplementaryAnswerObjects(QuestionEntity originalQuestion, String failedLaw, Question supplementaryQuestion) {
+    Question fillSupplementaryAnswerObjects(QuestionEntity originalQuestion, String failedLaw, Question supplementaryQuestion, Language lang) {
         Map<String, List<String>> before = new HashMap<>();
         MultiValuedMap<String, String> beforeIndirect = new HashSetValuedHashMap<>();
         Map<String, String> texts = new HashMap<>();
@@ -1034,7 +1188,7 @@ public class ProgrammingLanguageExpressionDomain extends Domain {
 
         try {
             String text = stringSubstitutor.replace(supplementaryQuestion.getQuestionText());
-            text = text.replaceAll("operators (.) and \\1 have same precedence and", "operator $1 has");
+            text = text.replaceAll(getMessage("expr_domain.SAME_PRECEDENCE_TEMPLATE", lang), getMessage("expr_domain.OPERATOR_TEMPLATE", lang));
 
             supplementaryQuestion.getQuestionData().setQuestionText(text);
         } catch (IllegalArgumentException ex) {
@@ -1102,7 +1256,7 @@ public class ProgrammingLanguageExpressionDomain extends Domain {
                 if (sameAnswers && isAnswerCorrect) {
                     ViolationEntity violationEntity = new ViolationEntity();
                     violationEntity.setLawName(newAnswer.getDomainInfo());
-                    return makeSupplementaryQuestion(originalQuestion, violationEntity);
+                    return makeSupplementaryQuestion(originalQuestion, violationEntity, lang);
                 }
 
                 answers.add(newAnswer);
@@ -1176,12 +1330,15 @@ public class ProgrammingLanguageExpressionDomain extends Domain {
             // retrieve subjects' info from facts ...
             Map<String, BackendFactEntity> nameToText = new HashMap<>();
             Map<String, BackendFactEntity> nameToPos = new HashMap<>();
+            Map<String, BackendFactEntity> nameToBeforeThirdOperator = new HashMap<>();
 
             for (BackendFactEntity violation : violations) {
                 if (violation.getVerb().equals("text")) {
                     nameToText.put(violation.getSubject(), violation);
                 } else if (violation.getVerb().equals("index")) {
                     nameToPos.put(violation.getSubject(), violation);
+                } else if (violation.getVerb().equals("before_third_operator")) {
+                    nameToBeforeThirdOperator.put(violation.getSubject(), violation);
                 }
             }
 
@@ -1190,29 +1347,34 @@ public class ProgrammingLanguageExpressionDomain extends Domain {
                 ViolationEntity violationEntity = new ViolationEntity();
                 if (violation.getVerb().equals("student_error_more_precedence")) {
                     if (getIndexFromName(violation.getSubject(), false).orElse(0) > getIndexFromName(violation.getObject(), false).orElse(0)) {
-                        violationEntity.setLawName("error_single_token_binary_operator_has_unevaluated_higher_precedence_left");
+                        violationEntity.setLawName("error_base_higher_precedence_left");
                     } else {
-                        violationEntity.setLawName("error_single_token_binary_operator_has_unevaluated_higher_precedence_right");
+                        violationEntity.setLawName("error_base_higher_precedence_right");
                     }
                 } else if (violation.getVerb().equals("student_error_left_assoc")) {
-                    violationEntity.setLawName("error_single_token_binary_operator_has_unevaluated_same_precedence_left_associativity_left");
+                    violationEntity.setLawName("error_base_same_precedence_left_associativity_left");
                 } else if (violation.getVerb().equals("student_error_right_assoc")) {
-                    violationEntity.setLawName("error_single_token_binary_operator_has_unevaluated_same_precedence_right_associativity_right");
-                } else if (violation.getVerb().equals("student_error_strict_operands_order_base")) {
-                    violationEntity.setLawName("error_student_error_strict_operands_order_base");
+                    violationEntity.setLawName("error_base_same_precedence_right_associativity_right");
+                } else if (violation.getVerb().equals("student_error_strict_operands_order")) {
+                    violationEntity.setLawName("error_base_student_error_strict_operands_order_base");
                 } else if (violation.getVerb().equals("student_error_in_complex")) {
-                    violationEntity.setLawName("error_student_error_in_complex");
+                    violationEntity.setLawName("error_base_student_error_in_complex");
                 } else if (violation.getVerb().equals("wrong_type")) {
                     violationEntity.setLawName("error_wrong_type");
                 }
                 if (violationEntity.getLawName() != null) {
-                    violationEntity.setViolationFacts(new ArrayList<>(Arrays.asList(
+                    ArrayList<BackendFactEntity> facts = new ArrayList<>(Arrays.asList(
                             violation,
                             nameToText.get(violation.getObject()),
                             nameToText.get(violation.getSubject()),
                             nameToPos.get(violation.getObject()),
-                            nameToPos.get(violation.getSubject())
-                    )));
+                            nameToPos.get(violation.getSubject())));
+                    if (nameToBeforeThirdOperator.containsKey(violation.getObject())) {
+                        facts.add(nameToBeforeThirdOperator.get(violation.getObject()));
+                        facts.add(nameToPos.get(nameToBeforeThirdOperator.get(violation.getObject()).getObject()));
+                        facts.add(nameToText.get(nameToBeforeThirdOperator.get(violation.getObject()).getObject()));
+                    }
+                    violationEntity.setViolationFacts(facts);
                     mistakes.add(violationEntity);
                 }
             }
@@ -1378,14 +1540,18 @@ public class ProgrammingLanguageExpressionDomain extends Domain {
             String correctlyAppliedLaw = null;
             if (violation.getVerb().equals("student_error_more_precedence_base")) {
                 if (getIndexFromName(violation.getSubject(), false).orElse(0) > getIndexFromName(violation.getObject(), false).orElse(0)) {
-                    correctlyAppliedLaw = "error_single_token_binary_operator_has_unevaluated_higher_precedence_left";
+                    correctlyAppliedLaw = "error_base_higher_precedence_left";
                 } else {
-                    correctlyAppliedLaw = "error_single_token_binary_operator_has_unevaluated_higher_precedence_right";
+                    correctlyAppliedLaw = "error_base_higher_precedence_right";
                 }
             } else if (violation.getVerb().equals("student_error_left_assoc_base")) {
-                correctlyAppliedLaw = "error_single_token_binary_operator_has_unevaluated_same_precedence_left_associativity_left";
+                correctlyAppliedLaw = "error_base_same_precedence_left_associativity_left";
             } else if (violation.getVerb().equals("student_error_right_assoc_base")) {
-                correctlyAppliedLaw = "error_single_token_binary_operator_has_unevaluated_same_precedence_right_associativity_right";
+                correctlyAppliedLaw = "error_base_same_precedence_right_associativity_right";
+            } else if (violation.getVerb().equals("student_error_in_complex_base")) {
+                correctlyAppliedLaw = "error_base_student_error_in_complex";
+            } else if (violation.getVerb().equals("student_error_strict_operands_order_base")) {
+                correctlyAppliedLaw = "error_base_student_error_strict_operands_order_base";
             }
             if (correctlyAppliedLaw != null) {
                 result.add(correctlyAppliedLaw);
@@ -1396,28 +1562,28 @@ public class ProgrammingLanguageExpressionDomain extends Domain {
     }
 
     @Override
-    public List<HyperText> makeExplanation(List<ViolationEntity> mistakes, FeedbackType feedbackType) {
+    public List<HyperText> makeExplanation(List<ViolationEntity> mistakes, FeedbackType feedbackType, Language lang) {
         ArrayList<HyperText> result = new ArrayList<>();
         for (ViolationEntity mistake : mistakes) {
-            result.add(makeExplanation(mistake, feedbackType));
+            result.add(makeExplanation(mistake, feedbackType, lang));
         }
         return result;
     }
 
-    private static String getOperatorTextDescription(String errorText) {
+    private String getOperatorTextDescription(String errorText, Language lang) {
         if (errorText.equals("(")) {
-            return "parenthesis ";
+            return getMessage("expr_domain.PARENTHESIS", lang);
         } else if (errorText.equals("[")) {
-            return "brackets ";
+            return getMessage("expr_domain.BRACKETS", lang);
         } else if (errorText.contains("(")) {
-            return "function call ";
+            return getMessage("expr_domain.FUNC_CALL", lang);
         }
-        return "operator ";
+        return getMessage("expr_domain.OPERATOR", lang);
     }
 
-    private HyperText makeExplanation(ViolationEntity mistake, FeedbackType feedbackType) {
+    private HyperText makeExplanation(ViolationEntity mistake, FeedbackType feedbackType, Language lang) {
         if (mistake.getLawName().equals("error_select_precedence_or_associativity")) {
-            return new HyperText("Wrong, precedence checked before associativity");
+            return new HyperText(getMessage("expr_domain.ERROR_PRECEDENCE_BEFORE_ASSOC", lang));
         } else if (mistake.getLawName().equals("error_select_highest_precedence")) {
             String text = "";
             String index;
@@ -1428,7 +1594,7 @@ public class ProgrammingLanguageExpressionDomain extends Domain {
                     index = fact.getObject();
                 }
             }
-            return new HyperText("Wrong, precedence of operator " + text + " is higher");
+            return new HyperText(getMessage("expr_domain.ERROR_PRECEDENCE_HIGHER1", lang) + text + getMessage("expr_domain.ERROR_PRECEDENCE_HIGHER2", lang));
         } else if (mistake.getLawName().equals("wrong_operand_type")) {
             String realType = "";
             String studentType = "";
@@ -1485,37 +1651,65 @@ public class ProgrammingLanguageExpressionDomain extends Domain {
         String reasonPos = nameToPos.get(base.getObject());
         String errorPos = nameToPos.get(base.getSubject());
 
-        String what = getOperatorTextDescription(reasonText) + reasonText + " at pos " + reasonPos
-                + " should be evaluated before " + getOperatorTextDescription(errorText) + errorText + " at pos " + errorPos;
-        String reason = "";
+        StringJoiner joiner = new StringJoiner(" ");
+        joiner
+                .add(getOperatorTextDescription(reasonText, lang))
+                .add(reasonText)
+                .add(getMessage("expr_domain.AT_POS", lang))
+                .add(reasonPos)
+                .add(getMessage("expr_domain.EVALUATES_BEFORE", lang))
+                .add(getOperatorTextDescription(errorText, lang))
+                .add(errorText)
+                .add(getMessage("expr_domain.AT_POS", lang))
+                .add(errorPos);
+        joiner.add("\n").add(getMessage("expr_domain.BECAUSE", lang));
 
         String errorType = mistake.getLawName();
 
-        if (errorType.equals("error_single_token_binary_operator_has_unevaluated_higher_precedence_left") ||
-                errorType.equals("error_single_token_binary_operator_has_unevaluated_higher_precedence_right")) {
-            reason = " because " + getOperatorTextDescription(reasonText) + reasonText + " has higher precedence";
-        } else if (errorType.equals("error_single_token_binary_operator_has_unevaluated_same_precedence_left_associativity_left") && errorText.equals(reasonText)) {
-            reason = " because " + getOperatorTextDescription(reasonText) + reasonText + " has left associativity and is evaluated from left to right";
-        } else if (errorType.equals("error_single_token_binary_operator_has_unevaluated_same_precedence_left_associativity_left")) {
-            reason = " because " + getOperatorTextDescription(reasonText) + reasonText + " has the same precedence and left associativity";
-        } else if (errorType.equals("error_single_token_binary_operator_has_unevaluated_same_precedence_right_associativity_right") && errorText.equals(reasonText)) {
-            reason = " because " + getOperatorTextDescription(reasonText) + reasonText + " has right associativity and is evaluated from right to left";
-        } else if (errorType.equals("error_single_token_binary_operator_has_unevaluated_same_precedence_right_associativity_right")) {
-            reason = " because " + getOperatorTextDescription(reasonText) + reasonText + " has the same precedence and right associativity";
-        } else if (errorType.equals("error_student_error_in_complex") && errorText.equals("(")) {
-            reason = " because function arguments are evaluated before function call​";
-        } else if (errorType.equals("error_student_error_in_complex") && errorText.equals("[")) {
-            reason = " because expression in brackets is evaluated before brackets";
-        } else if (errorType.equals("error_student_error_in_complex") && thirdOperatorText.equals("(")) {
-            reason = " because expression in parenthesis is evaluated before operators​ outside of them";
-        } else if (errorType.equals("error_student_error_in_complex") && thirdOperatorText.equals("[")) {
-            reason = " because expression in brackets is evaluated before operator outside of them​​";
-        } else if (errorType.equals("error_student_error_strict_operands_order_base")) {
-            reason = " because the left operand of the " + getOperatorTextDescription(thirdOperatorText) + thirdOperatorText + " at pos " + thirdOperatorPos + " must be evaluated before its right operand​";
+        if (errorType.equals("error_base_higher_precedence_left") ||
+                errorType.equals("error_base_higher_precedence_right")) {
+            joiner
+                    .add(getOperatorTextDescription(reasonText, lang))
+                    .add(reasonText)
+                    .add(getMessage("expr_domain.HAS_HIGHER_PRECEDENCE", lang));
+        } else if (errorType.equals("error_base_same_precedence_left_associativity_left") && errorText.equals(reasonText)) {
+            joiner
+                    .add(getOperatorTextDescription(reasonText, lang))
+                    .add(reasonText)
+                    .add(getMessage("expr_domain.LEFT_ASSOC_DESC", lang));
+        } else if (errorType.equals("error_base_same_precedence_left_associativity_left")) {
+            joiner
+                    .add(getOperatorTextDescription(reasonText, lang))
+                    .add(reasonText)
+                    .add(getMessage("expr_domain.SAME_PRECEDENCE_LEFT_ASSOC", lang));
+        } else if (errorType.equals("error_base_same_precedence_right_associativity_right") && errorText.equals(reasonText)) {
+            joiner
+                    .add(getOperatorTextDescription(reasonText, lang))
+                    .add(reasonText)
+                    .add(getMessage("expr_domain.RIGHT_ASSOC_DESC", lang));
+        } else if (errorType.equals("error_base_same_precedence_right_associativity_right")) {
+            joiner
+                    .add(getOperatorTextDescription(reasonText, lang))
+                    .add(reasonText)
+                    .add(getMessage("expr_domain.SAME_PRECEDENCE_RIGHT_ASSOC", lang));
+        } else if (errorType.equals("error_base_student_error_in_complex") && errorText.equals("(")) {
+            joiner.add(getMessage("expr_domain.FUNC_ARGUMENTS_BEFORE_CALL", lang));
+        } else if (errorType.equals("error_base_student_error_in_complex") && thirdOperatorText.equals("(")) {
+            joiner.add(getMessage("expr_domain.IN_PARENTHESIS_BEFORE", lang));
+        } else if (errorType.equals("error_base_student_error_in_complex")) {
+            joiner.add(getMessage("expr_domain.IN_COMPLEX_BEFORE", lang));
+        } else if (errorType.equals("error_base_student_error_strict_operands_order_base")) {
+            joiner
+                    .add(getMessage("expr_domain.LEFT_OPERAND", lang))
+                    .add(getOperatorTextDescription(thirdOperatorText, lang))
+                    .add(thirdOperatorText)
+                    .add(getMessage("expr_domain.AT_POS", lang))
+                    .add(thirdOperatorPos)
+                    .add(getMessage("expr_domain.MUST_BEFORE_RIGHT", lang));
         } else {
-            reason = " because unknown error";
+            joiner.add(getMessage("expr_domain.UNKNOWN_ERROR", lang));
         }
 
-        return new HyperText(what + "\n" + reason);
+        return new HyperText(joiner.toString());
     }
 }

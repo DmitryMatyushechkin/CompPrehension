@@ -9,26 +9,33 @@ import { container } from "tsyringe";
 import { ExerciseStore } from "../stores/exercise-store";
 import { CurrentQuestion } from "../components/exercise/current-question";
 import { Optional } from "../components/common/optional";
+import { useTranslation } from "react-i18next";
+import { Alert } from "react-bootstrap";
 
 export const Exercise = observer(() => {
     const [exerciseStore] = useState(() => container.resolve(ExerciseStore));
-    type State = 'INITIAL' | 'MODAL' | 'EXERCISE';
-    const [state, setState] = useState<State>('INITIAL');
+    const { exerciseState, setExerciseState, storeState:excerciseStoreState, currentQuestion } = exerciseStore;
+    const { storeState:currentQuestionStoreState } = currentQuestion;
+    const { t } = useTranslation();
 
     // on first render
     useEffect(() => {
         (async () => {
+            if (exerciseState === 'LAUNCH_ERROR') {
+                return;
+            }
+
             if (exerciseStore.currentQuestion.question) {
-                setState('EXERCISE');
+                setExerciseState('EXERCISE');
                 return;
             }
 
             await exerciseStore.loadSessionInfo();
             const attemptExistis = await exerciseStore.loadExistingExerciseAttempt();
             if (attemptExistis) {
-                setState('MODAL');
+                setExerciseState('MODAL');
             } else {
-                setState('EXERCISE');
+                setExerciseState('EXERCISE');
                 await createAttemptAndLoadQuestion();
             }
         })()
@@ -50,31 +57,51 @@ export const Exercise = observer(() => {
     }
 
     return (
-        <LoadingWrapper isLoading={state === 'INITIAL'}>
-            <Optional isVisible={state === 'EXERCISE'}>
-                <Header />
-                <div className="mt-5">
-                    <CurrentQuestion />
-                    <GenerateNextAnswerBtn /> 
-                    <GenerateNextQuestionBtn />
-                </div>                
-            </Optional>
-            <Optional isVisible={state === 'MODAL'}>
-                <Modal  type={'DIALOG'}
-                        title={"Found existing attempt"}
-                        primaryBtnTitle="Continue"
-                        handlePrimaryBtnClicked={() => {
-                            setState('EXERCISE');
-                            loadQuestion();
-                        }}
-                        secondaryBtnTitle="New"
-                        handleSecondaryBtnClicked={() => {
-                            setState('EXERCISE');
-                            createAttemptAndLoadQuestion();
-                        }}>
-                    <p>Would you like to continue the existing attempt or start a new one?</p>
-                </Modal>
-            </Optional>
-        </LoadingWrapper>
+        <>
+            <LoadingWrapper isLoading={exerciseStore.isSessionLoading === true || exerciseState === 'INITIAL'}>
+                <Optional isVisible={exerciseState === 'EXERCISE' || exerciseState === 'COMPLETED'}>
+                    <Header />
+                    <div className="mt-5">
+                        <CurrentQuestion />
+                        <Optional isVisible={exerciseState === 'EXERCISE'}>
+                            <div className="mt-3">
+                                <GenerateNextAnswerBtn />
+                            </div>
+                            <div className="mt-2">
+                                <GenerateNextQuestionBtn />
+                            </div>
+                        </Optional>
+                        <Optional isVisible={exerciseState === 'COMPLETED'}>
+                            <div className="mt-3">
+                                <Alert variant={'success'}>
+                                    {t('exercise_completed')!}
+                                </Alert>
+                            </div>
+                        </Optional>
+                    </div>                
+                </Optional>
+                <Optional isVisible={exerciseState === 'MODAL'}>
+                    <Modal  type={'DIALOG'}
+                            title={t('foundExisitingAttempt_title')}
+                            primaryBtnTitle={t('foundExisitingAttempt_continueattempt')}
+                            handlePrimaryBtnClicked={() => {
+                                setExerciseState('EXERCISE');
+                                loadQuestion();
+                            }}
+                            secondaryBtnTitle={t('foundExisitingAttempt_newattempt')}
+                            handleSecondaryBtnClicked={() => {
+                                setExerciseState('EXERCISE');
+                                createAttemptAndLoadQuestion();
+                            }}>
+                        <p>{t('foundExisitingAttempt_descr')}?</p>
+                    </Modal>
+                </Optional>
+            </LoadingWrapper>
+            {
+                [excerciseStoreState, currentQuestionStoreState]
+                    .filter(x => x.tag === 'ERROR')
+                    .map((x, idx, arr) => x.tag === 'ERROR' && <div className="mt-2"><Alert variant='danger'>{x.error.message}</Alert></div>)
+            }
+        </>
     );
 })

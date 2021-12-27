@@ -4,15 +4,8 @@ import * as O from "fp-ts/lib/Option";
 import * as E from "fp-ts/lib/Either";
 import * as io from "io-ts";
 import { pipe } from "fp-ts/lib/function";
-
-export type RequestError = {
-    error?: string,
-    message: string,
-    path?: string,
-    status?: number,
-    timestamp?: string,
-    trace?: string,
-}
+import { RequestError } from "../types/request-error";
+import { string } from "fp-ts";
 
 export type PromiseEither<E, A> = Promise<Either<E, A>>
 
@@ -25,6 +18,14 @@ export type PromiseEither<E, A> = Promise<Either<E, A>>
 export async function ajaxGet<T = unknown>(url: string, validator?: io.Type<T, T, unknown>) : PromiseEither<RequestError, T> {
     console.log(`ajax get: ${url}`);
     return await ajax(url, undefined, validator);    
+}
+
+export async function ajaxGetWithParams<T = unknown>(url: string, params: Record<string, string>, validator?: io.Type<T>) : PromiseEither<RequestError, T> {
+    const preparedUrl = new URL(url);
+    preparedUrl.search = new URLSearchParams(params).toString();
+
+    console.log(`ajax get: ${preparedUrl}`);
+    return await ajax(preparedUrl.toString(), undefined, validator);    
 }
 
 /**
@@ -57,22 +58,16 @@ async function ajax<T = unknown>(url: string, params?: RequestInit, validator?: 
     
     const [data, validationErrors] = await fetcher.run()
         .catch(async () => [left<RequestError, T>({ message: "Connection error"}), O.none as O.Option<io.Errors>] as const);
-
-    if (O.isSome(validationErrors)) {    
-        const error = { message: `Type inconsistency for properties of ${validator?.name} type: ${getPaths(left(validationErrors.value)).join(', ')}` };
-        return (console.error(error), left(error));      
-    }
-
     E.fold(err => console.error(err), val => console.log(val))(data);
+        
+    if (O.isSome(validationErrors)) {    
+        const error = { message: `Type inconsistency for properties of ${validator?.name} type: ${getPaths(validationErrors.value).join(', ')}` };
+        return (console.error(error), left(error));      
+    }    
     return data;
 }
 
-const getPaths = <A>(v: io.Validation<A>): Array<string> => {
-    return pipe(
-        v,
-        E.fold(
-            (errors) => errors.map((error) => error.context.map(({ key }) => key).join('.')),
-            () => ['no errors']
-        )
-    )
+const getPaths = (errors: io.Errors): Array<string> => {
+    return errors.map((error) => 
+        error.context.map(({ key }) => key).join('.'));
 }

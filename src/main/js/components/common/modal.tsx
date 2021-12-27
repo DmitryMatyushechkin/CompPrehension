@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, Modal as RBModal } from "react-bootstrap";
-import { notNullOrUndefinded } from "../../utils/helpers";
+import { notNulAndUndefinded } from "../../utils/helpers";
 import { Optional } from "./optional";
 
 
@@ -34,7 +34,7 @@ export const Modal = (props: ModalProps) => {
     return (
         <Optional isVisible={show ?? true}>
             <ModalWrapper type={type ?? 'MODAL'} show={show ?? true} onHide={handleClose} size={size}>
-                <Optional isVisible={notNullOrUndefinded(title) && title.length > 0}>
+                <Optional isVisible={notNulAndUndefinded(title) && title.length > 0}>
                     <RBModal.Header closeButton={closeButton}>
                         <RBModal.Title>{title}</RBModal.Title>
                     </RBModal.Header>
@@ -44,9 +44,9 @@ export const Modal = (props: ModalProps) => {
                 </RBModal.Body>
                 {(secondaryBtnTitle || primaryBtnTitle)
                     ? <RBModal.Footer>
-                        {secondaryBtnTitle ? <Button variant="secondary" onClick={handleSecondaryBtnClicked}>{secondaryBtnTitle}</Button> : null}
-                        {primaryBtnTitle ? <Button variant="primary" onClick={handlePrimaryBtnClicked}>{primaryBtnTitle}</Button> : null}
-                    </RBModal.Footer>
+                        {secondaryBtnTitle && <Button variant="secondary" onClick={handleSecondaryBtnClicked}>{secondaryBtnTitle}</Button>}
+                        {primaryBtnTitle && <Button variant="primary" onClick={handlePrimaryBtnClicked}>{primaryBtnTitle}</Button>}
+                      </RBModal.Footer>
                     : null}            
             </ModalWrapper>
         </Optional>        

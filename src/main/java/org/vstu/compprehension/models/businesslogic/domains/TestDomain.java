@@ -1,5 +1,6 @@
 package org.vstu.compprehension.models.businesslogic.domains;
 
+import org.springframework.web.context.annotation.RequestScope;
 import org.vstu.compprehension.Service.BackendService;
 import org.vstu.compprehension.Service.QuestionService;
 import org.vstu.compprehension.models.businesslogic.questionconcept.QuestionConceptChoice;
@@ -12,9 +13,13 @@ import org.vstu.compprehension.utils.HyperText;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.vstu.compprehension.models.businesslogic.*;
 
+import javax.inject.Singleton;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+@Singleton
 public class TestDomain extends Domain {
     
     private final int DEFAULT_ANSWERS_COUNT = 4;
@@ -66,6 +71,11 @@ public class TestDomain extends Domain {
     }
 
     @Override
+    public List<Concept> getLawConcepts(Law law) {
+        return null;
+    }
+
+    @Override
     public Question makeQuestion(QuestionRequest questionRequest, List<Tag> tags, Language userLanguage) {
 
         QuestionEntity question = new QuestionEntity();
@@ -90,7 +100,6 @@ public class TestDomain extends Domain {
         questionConceptChoices.add(qcc);
         
         //question.setQuestionConceptChoices(questionConceptChoices);
-        question.setAreAnswersRequireContext(false);
         //question.setLaws(questionRequest.getTargetLaws());
         question.setQuestionStatus(QuestionStatus.VIEWED);
         question.setQuestionText(questionText);
@@ -114,7 +123,7 @@ public class TestDomain extends Domain {
     }
 
     @Override
-    public List<HyperText> makeExplanation(List<ViolationEntity> mistakes, FeedbackType feedbackType) {
+    public List<HyperText> makeExplanation(List<ViolationEntity> mistakes, FeedbackType feedbackType, Language lang) {
         String explanation = "";
         
         if (mistakes.size() == 0) { explanation = "Ответ правильный"; } 
@@ -173,7 +182,12 @@ public class TestDomain extends Domain {
     }
 
     @Override
-    public Question makeSupplementaryQuestion(QuestionEntity question, ViolationEntity violation) {
+    public boolean needSupplementaryQuestion(ViolationEntity violation) {
+        return false;
+    }
+
+    @Override
+    public Question makeSupplementaryQuestion(QuestionEntity question, ViolationEntity violation, Language userLang) {
         return null;
     }
 
@@ -188,6 +202,17 @@ public class TestDomain extends Domain {
     @Override
     public CorrectAnswer getAnyNextCorrectAnswer(Question q) {
         return null;
+    }
+
+    
+    @Override
+    public Set<String> possibleViolations(Question q, List<ResponseEntity> completedSteps) {
+        return new HashSet<>();
+    }
+
+    @Override
+    public Set<Set<String>> possibleViolationsByStep(Question q, List<ResponseEntity> completedSteps) {
+        return new HashSet<>();
     }
 
     @Override
